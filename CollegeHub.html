@@ -3,28 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CollegeHub Dashboard</title>
+    <!-- NEW: Renamed Title -->
+    <title>CampusHub Dashboard</title>
     <!-- Google Fonts for a modern look -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- NEW: Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        /* === Global Setup & Variables === */
+        /* === Global Setup & NEW Variables === */
         :root {
-            --primary-color: #005A9C; /* A strong college blue */
-            --secondary-color: #FDB813; /* A vibrant gold/yellow */
-            --bg-color: #f4f7f6;
+            --primary-color: #5E35B1; /* Deep Purple */
+            --primary-light: #7E57C2;
+            --secondary-color: #FFC107; /* Amber/Gold */
+            --primary-gradient: linear-gradient(135deg, #7E57C2 0%, #5E35B1 100%);
+            --bg-color: #f8f9fa; /* Slightly lighter background */
             --card-bg: #ffffff;
             --text-color: #333;
-            --text-light: #666;
+            --text-light: #555; /* Darker light text for better contrast */
             --border-color: #e0e0e0;
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
 
         body {
-            font-family: 'Inter', sans-serif; /* Changed to Inter for a clean look */
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
@@ -78,7 +83,7 @@
             padding: 10px;
             border-bottom: 3px solid transparent;
             transition: all 0.3s ease;
-            border-radius: 4px; /* Added for better mobile tap */
+            border-radius: 4px;
         }
 
         .nav-link:hover,
@@ -113,7 +118,7 @@
         }
 
         .cta-button {
-            background-color: var(--primary-color);
+            background: var(--primary-gradient); /* NEW: Gradient background */
             color: white;
             border: none;
             padding: 10px 18px;
@@ -128,8 +133,8 @@
         }
 
         .cta-button:hover {
-            background-color: #004a80;
-            box-shadow: 0 4px 10px rgba(0, 90, 156, 0.2);
+            background: var(--primary-light); /* NEW: Use light color */
+            box-shadow: 0 4px 15px rgba(94, 53, 177, 0.3); /* NEW: Purple shadow */
             transform: translateY(-2px);
         }
 
@@ -152,7 +157,7 @@
             font-weight: 600;
         }
 
-        /* === Post Card Styling (THE "EFFECTS" ARE HERE) === */
+        /* === Post Card Styling === */
         .post-card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -160,21 +165,14 @@
             box-shadow: var(--shadow);
             margin-bottom: 20px;
             overflow: hidden;
-
-            /* == INTERACTIVE PART 1: The 'on-load' animation == */
             opacity: 0;
             transform: translateY(20px);
             animation: fadeIn 0.5s ease-out forwards;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        /* Stagger the animation for a nice cascade effect */
-        .post-card:nth-child(1) { animation-delay: 0.1s; }
-        .post-card:nth-child(2) { animation-delay: 0.2s; }
-        .post-card:nth-child(3) { animation-delay: 0.3s; }
-
-        /* == INTERACTIVE PART 2: The 'hover' movement == */
-        transition:transform 0.3s ease, box-shadow 0.3s ease;
-        
+        /* Stagger the animation */
+        /* JS will add these sequentially */
 
         .post-card:hover {
             transform: translateY(-5px);
@@ -219,17 +217,30 @@
         .category-tag {
             font-weight: 600;
             font-size: 0.8rem;
-            padding: 2px 6px;
-            border-radius: 4px;
+            padding: 3px 8px; /* Slightly larger */
+            border-radius: 6px;
             color: white;
         }
         .lost-found { background-color: #d9534f; }
         .team-up { background-color: #5bc0de; }
         .qa { background-color: #5cb85c; }
+        .events { background-color: var(--secondary-color); color: #333; } /* NEW: Event tag */
 
         .post-content {
             padding: 0 20px 15px;
         }
+        
+        /* NEW: Post Image Styling */
+        .post-image {
+            width: 100%;
+            height: auto;
+            max-height: 400px; /* Prevent huge images */
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+        }
+        
         .post-content h3 {
             margin-bottom: 10px;
         }
@@ -270,7 +281,6 @@
 
         /* === Sidebar Styling === */
         .sidebar {
-            /* This will be handled by the grid, but we can add a min-width for safety */
             min-width: 280px;
         }
         
@@ -286,7 +296,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            color: var(--primary-color);
+            color: var(--primary-color); /* NEW: Uses new purple */
         }
 
         .event-mini-card {
@@ -301,7 +311,7 @@
             background-color: #f9f9f9;
         }
         .event-date {
-            background-color: var(--primary-color);
+            background: var(--primary-gradient); /* NEW: Gradient background */
             color: white;
             border-radius: 8px;
             width: 50px;
@@ -323,7 +333,7 @@
         .event-details h5 {
             font-weight: 600;
             margin-bottom: 2px;
-            font-size: 0.95rem; /* Adjusted for clarity */
+            font-size: 0.95rem;
         }
         .event-details span {
             font-size: 0.85rem;
@@ -344,14 +354,15 @@
             text-decoration: none;
             color: var(--text-light);
             font-weight: 500;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: all 0.3s ease;
         }
         .trending-topic:hover {
-            background-color: var(--primary-color);
+            background: var(--primary-gradient); /* NEW: Gradient background */
             color: white;
+            padding-left: 12px; /* NEW: Subtle movement */
         }
 
-        /* === INTERACTIVE PART 3: The Modal (Pop-up) === */
+        /* === Modal (Pop-up) === */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -363,15 +374,12 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px; /* Added for mobile */
-            
-            /* Hide by default */
+            padding: 20px;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
         }
 
-        /* This class will be added by JavaScript */
         .modal-overlay.active {
             opacity: 1;
             pointer-events: all;
@@ -381,11 +389,9 @@
             background-color: var(--card-bg);
             padding: 30px;
             border-radius: 12px;
-            width: 100%; /* Changed for mobile */
+            width: 100%;
             max-width: 500px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            
-            /* Animation for the modal itself */
             transform: scale(0.95);
             transition: transform 0.3s ease;
         }
@@ -427,44 +433,74 @@
             border-radius: 8px;
             font-family: 'Inter', sans-serif;
             font-size: 0.95rem;
-            background-color: #fdfdfd; /* Slight off-white for inputs */
+            background-color: #fdfdfd;
         }
         .form-group textarea {
             resize: vertical;
         }
         
-        /* === Responsive Design === */
+        /* NEW: File Upload Button Styling */
+        #post-image-input {
+            display: none; /* Hide the default ugly input */
+        }
+
+        .file-upload-label {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .file-upload-label:hover {
+            border-color: var(--primary-color);
+            background-color: #f8f9fa;
+            color: var(--primary-color);
+        }
+        .file-upload-label i {
+            margin-right: 8px;
+        }
         
-        /* For Tablets and smaller */
+        #file-name-display {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 10px;
+            display: block;
+        }
+
+        /* === Responsive Design === */
         @media (max-width: 992px) {
             .dashboard-container {
-                grid-template-columns: 1fr; /* Stack feed and sidebar */
+                grid-template-columns: 1fr;
             }
             .sidebar {
-                order: -1; /* Move sidebar to the top on mobile */
+                order: -1;
             }
         }
         
-        /* For Mobile phones */
         @media (max-width: 768px) {
             .nav-menu {
-                display: none; /* Hide nav links on mobile (future: add hamburger) */
+                display: none;
             }
             .nav-logo {
                 font-size: 1.3rem;
             }
             .cta-button span {
-                display: none; /* Hide text, show icon */
+                display: none;
             }
             .cta-button {
                 padding: 10px;
                 border-radius: 50%;
-                width: 40px; /* Make it a circle */
+                width: 40px;
                 height: 40px;
                 font-size: 0.9rem;
             }
             .cta-button .fa-plus {
-                margin: 0; /* Center icon */
+                margin: 0;
             }
             .dashboard-container {
                 padding: 0 10px;
@@ -475,7 +511,7 @@
             }
             .post-actions button {
                 font-size: 0.8rem;
-                padding: 12px 5px; /* Reduce padding */
+                padding: 12px 5px;
                 gap: 5px;
             }
         }
@@ -485,12 +521,12 @@
 <body>
 
     <!-- =======================
-    NAVBAR
+    NAVBAR (Renamed)
     ======================== -->
     <nav class="navbar">
         <div class="navbar-container">
-            <a href="#" class="nav-logo">CollegeHub</a>
-            <!-- This menu is hidden on mobile by the CSS -->
+            <!-- NEW: Renamed Logo -->
+            <a href="#" class="nav-logo">CampusHub</a>
             <div class="nav-menu">
                 <a href="#" class="nav-link active">Dashboard</a>
                 <a href="#" class="nav-link">Lost & Found</a>
@@ -504,7 +540,7 @@
                     <span>Create Post</span>
                 </button>
                 <i class="fas fa-bell nav-icon"></i>
-                <img src="https://placehold.co/40x40/005A9C/FFFFFF?text=PS" alt="User Profile" class="user-profile-pic" title="Priya Sharma">
+                <img src="https://placehold.co/40x40/5E35B1/FFFFFF?text=PS" alt="User Profile" class="user-profile-pic" title="Priya Sharma">
             </div>
         </div>
     </nav>
@@ -515,69 +551,14 @@
     <main class="dashboard-container">
         
         <!-- === Left Side: Post Feed === -->
-        <section class="feed">
+        <section class="feed" id="post-feed">
             <h2>Campus Feed</h2>
-
-            <!-- Post Card 1: Lost & Found -->
-            <div class="post-card">
-                <div class="post-header">
-                    <img src="https://placehold.co/45x45/d9534f/FFFFFF?text=PS" alt="User" class="post-user-pic" title="Priya Sharma">
-                    <div>
-                        <span class="post-user-name">Priya Sharma</span>
-                        <span class="post-timestamp">2 hours ago in <span class="category-tag lost-found">Lost & Found</span></span>
-                    </div>
-                </div>
-                <div class="post-content">
-                    <h3>Lost: Blue Cello Water Bottle</h3>
-                    <p>Hey everyone, I think I left my blue Cello water bottle in the library's 2nd-floor reading room. Has anyone seen it?</p>
-                </div>
-                <div class="post-actions">
-                    <button><i class="fas fa-thumbs-up"></i> Like</button>
-                    <button><i class="fas fa-comment"></i> Comment (2)</button>
-                    <button><i class="fas fa-share"></i> Share</button>
-                </div>
-            </div>
-
-            <!-- Post Card 2: Team Up -->
-            <div class="post-card">
-                <div class="post-header">
-                    <img src="https://placehold.co/45x45/5bc0de/FFFFFF?text=RV" alt="User" class="post-user-pic" title="Rohan Verma">
-                    <div>
-                        <span class="post-user-name">Rohan Verma</span>
-                        <span class="post-timestamp">5 hours ago in <span class="category-tag team-up">Team Up</span></span>
-                    </div>
-                </div>
-                <div class="post-content">
-                    <h3>Need Teammates for 'Smart India Hackathon'</h3>
-                    <p>We're forming a team for the SIH. Looking for one backend developer (Node/Flask) and one UI/UX designer. DM me if interested!</p>
-                </div>
-                <div class="post-actions">
-                    <button><i class="fas fa-thumbs-up"></i> Like (5)</button>
-                    <button><i class="fas fa-comment"></i> Comment (1)</button>
-                    <button><i class="fas fa-share"></i> Share</button>
-                </div>
-            </div>
-
-            <!-- Post Card 3: Q&A -->
-            <div class="post-card">
-                <div class="post-header">
-                    <img src="https://placehold.co/45x45/5cb85c/FFFFFF?text=AS" alt="User" class="post-user-pic" title="Aarav Singh">
-                    <div>
-                        <span class="post-user-name">Aarav Singh</span>
-                        <span class="post-timestamp">1 day ago in <span class="category-tag qa">Q&A</span></span>
-                    </div>
-                </div>
-                <div class="post-content">
-                    <h3>Best place for biryani near campus?</h3>
-                    <p>New to the area. Need recommendations for good and affordable biryani. What's the best spot?</p>
-                </div>
-                <div class="post-actions">
-                    <button><i class="fas fa-thumbs-up"></i> Like (11)</button>
-                    <button><i class="fas fa-comment"></i> Comment (7)</button>
-                    <button><i class="fas fa-share"></i> Share</button>
-                </div>
-            </div>
-
+            <!-- 
+                NEW: This section is now dynamic.
+                The hard-coded posts are gone and will be
+                loaded by JavaScript.
+            -->
+            <p id="feed-loading">Loading Campus Feed...</p>
         </section>
 
         <!-- === Right Side: Sidebar === -->
@@ -626,7 +607,7 @@
                 <h3>Create a New Post</h3>
                 <i class="fas fa-times modal-close" id="modal-close-btn"></i>
             </div>
-            <form class="modal-form" onsubmit="return false;"> <!-- Prevents page reload on submit -->
+            <form class="modal-form" onsubmit="return false;">
                 <div class="form-group">
                     <label for="post-title">Title</label>
                     <input type="text" id="post-title" placeholder="e.g., 'Lost my ID card'">
@@ -635,67 +616,293 @@
                     <label for="post-category">Category</label>
                     <select id="post-category">
                         <option value="qa">Q&A / Recommendation</option>
-                        <option value="lost-found">Lost & Found</section>
+                        <option value="lost-found">Lost & Found</option>
                         <option value="team-up">Team Up</option>
-                        <option value="events">Campus Event</option>
+                        <option value="events">Events</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="post-description">Description</label>
                     <textarea id="post-description" rows="5" placeholder="Share more details..."></textarea>
                 </div>
+                
+                <!-- NEW: File Upload Section -->
+                <div class="form-group">
+                    <label for="post-image-input" class="file-upload-label">
+                        <i class="fas fa-upload"></i> Upload an Image
+                    </label>
+                    <input type="file" id="post-image-input" accept="image/*">
+                    <span id="file-name-display">No file chosen</span>
+                </div>
+
                 <button type="submit" class="cta-button">Publish Post</button>
             </form>
         </div>
     </div>
 
     <!-- 
-      All JavaScript is now inside this <script> tag 
+      ===============================================
+      NEW: SUPABASE JAVASCRIPT LOGIC
+      ===============================================
     -->
     <script>
-        // Wait for the DOM (the HTML page) to be fully loaded
         document.addEventListener('DOMContentLoaded', () => {
 
-            // === INTERACTIVE PART 3: Modal Logic ===
+            // === 1. SUPABASE CLIENT INITIALIZATION ===
+            // Replace these with your actual Supabase project URL and anon key
+            const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+            const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+            
+            let supabase;
+            try {
+                if (SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY') {
+                     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                } else {
+                    console.warn('Supabase keys not provided. Using mock data.');
+                }
+            } catch (error) {
+                console.error('Error initializing Supabase:', error);
+            }
 
-            // 1. Get all the elements we need to work with
+            // --- MOCK DATA FOR DEMO ---
+            // Set this to 'false' once your Supabase project is set up
+            const USE_MOCK_DATA = true;
+            
+            const MOCK_DATA = [
+                {
+                    id: 1,
+                    title: 'CodeStorm Hackathon 2025 Registrations Open!',
+                    content: 'Get ready for the biggest coding event of the year. Registrations are now open. Click the link in our bio to sign up!',
+                    category: 'events',
+                    image_url: 'https://placehold.co/600x350/5E35B1/FFFFFF?text=CodeStorm+Hackathon+Poster',
+                    created_at: new Date(Date.now() - 30 * 60000).toISOString(), // 30 mins ago
+                    like_count: 12,
+                    comment_count: 3,
+                    // This data would come from a JOIN with a 'users' table
+                    user: {
+                        user_name: 'Comp. Sci. Dept.',
+                        user_avatar: 'https://placehold.co/45x45/FFC107/333?text=CS'
+                    }
+                },
+                {
+                    id: 2,
+                    title: 'Lost: Blue Cello Water Bottle',
+                    content: "Hey everyone, I think I left my blue Cello water bottle in the library's 2nd-floor reading room. Has anyone seen it?",
+                    category: 'lost-found',
+                    image_url: 'https://placehold.co/600x400/eeeeee/d9534f?text=Lost+Water+Bottle',
+                    created_at: new Date(Date.now() - 120 * 60000).toISOString(), // 2 hours ago
+                    like_count: 0,
+                    comment_count: 2,
+                    user: {
+                        user_name: 'Priya Sharma',
+                        user_avatar: 'https://placehold.co/45x45/d9534f/FFFFFF?text=PS'
+                    }
+                },
+                {
+                    id: 3,
+                    title: "Need Teammates for 'Smart India Hackathon'",
+                    content: "We're forming a team for the SIH. Looking for one backend developer (Node/Flask) and one UI/UX designer. DM me if interested!",
+                    category: 'team-up',
+                    image_url: null, // No image
+                    created_at: new Date(Date.now() - 300 * 60000).toISOString(), // 5 hours ago
+                    like_count: 5,
+                    comment_count: 1,
+                    user: {
+                        user_name: 'Rohan Verma',
+                        user_avatar: 'https://placehold.co/45x45/5bc0de/FFFFFF?text=RV'
+                    }
+                },
+                {
+                    id: 4,
+                    title: 'Best place for biryani near campus?',
+                    content: 'New to the area. Need recommendations for good and affordable biryani. What\'s the best spot?',
+                    category: 'qa',
+                    image_url: null, // No image
+                    created_at: new Date(Date.now() - 24 * 3600 * 1000).toISOString(), // 1 day ago
+                    like_count: 11,
+                    comment_count: 7,
+                    user: {
+                        user_name: 'Aarav Singh',
+                        user_avatar: 'https://placehold.co/45x45/5cb85c/FFFFFF?text=AS'
+                    }
+                },
+            ];
+            // --- END MOCK DATA ---
+
+
+            // === 2. HELPER FUNCTIONS ===
+
+            /**
+             * Converts an ISO date string to a "time ago" format
+             */
+            function timeAgo(isoDate) {
+                const date = new Date(isoDate);
+                const seconds = Math.floor((new Date() - date) / 1000);
+                let interval = seconds / 31536000;
+                if (interval > 1) return Math.floor(interval) + " years ago";
+                interval = seconds / 2592000;
+                if (interval > 1) return Math.floor(interval) + " months ago";
+                interval = seconds / 86400;
+                if (interval > 1) return Math.floor(interval) + " days ago";
+                interval = seconds / 3600;
+                if (interval > 1) return Math.floor(interval) + " hours ago";
+                interval = seconds / 60;
+                if (interval > 1) return Math.floor(interval) + " minutes ago";
+                return Math.floor(seconds) + " seconds ago";
+            }
+
+            /**
+             * Gets the correct CSS class for a category
+             */
+            function getCategoryTag(category) {
+                const categoryMap = {
+                    'lost-found': 'lost-found',
+                    'team-up': 'team-up',
+                    'qa': 'qa',
+                    'events': 'events'
+                };
+                return categoryMap[category] || 'qa'; // Default to 'qa'
+            }
+            
+            /**
+             * Creates the HTML for a single post card
+             * @param {object} post - The post data
+             */
+            function createPostCard(post) {
+                // Determine like/comment button text
+                const likeText = post.like_count > 0 ? `Like (${post.like_count})` : 'Like';
+                const commentText = post.comment_count > 0 ? `Comment (${post.comment_count})` : 'Comment';
+                
+                // Special "Interested" button for events
+                const likeButton = post.category === 'events' 
+                    ? `<button><i class="fas fa-star"></i> Interested (${post.like_count || 0})</button>`
+                    : `<button><i class="fas fa-thumbs-up"></i> ${likeText}</button>`;
+
+                // Conditionally add an image if it exists
+                const imageHtml = post.image_url 
+                    ? `<img src="${post.image_url}" alt="Post Image" class="post-image">` 
+                    : '';
+
+                return `
+                    <div class="post-card" style="animation-delay: ${post.delay}s">
+                        <div class="post-header">
+                            <img src="${post.user.user_avatar}" alt="User" class="post-user-pic" title="${post.user.user_name}">
+                            <div>
+                                <span class="post-user-name">${post.user.user_name}</span>
+                                <span class="post-timestamp">
+                                    ${timeAgo(post.created_at)} in <span class="category-tag ${getCategoryTag(post.category)}">${post.category}</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            <h3>${post.title}</h3>
+                            ${imageHtml}
+                            <p>${post.content}</p>
+                        </div>
+                        <div class="post-actions">
+                            ${likeButton}
+                            <button><i class="fas fa-comment"></i> ${commentText}</button>
+                            <button><i class="fas fa-share"></i> Share</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+
+            // === 3. MAIN DATA LOADING FUNCTION ===
+            const postFeed = document.getElementById('post-feed');
+            const loadingIndicator = document.getElementById('feed-loading');
+
+            async function loadPosts() {
+                let posts = [];
+                let error = null;
+
+                if (USE_MOCK_DATA || !supabase) {
+                    // Use mock data
+                    posts = MOCK_DATA;
+                } else {
+                    // Use real Supabase data
+                    try {
+                        // This query assumes you have a 'posts' table
+                        // and a 'users' table with a relationship.
+                        // For a simple 'posts' table, use:
+                        // let { data, error: dbError } = await supabase.from('posts').select('*');
+                        
+                        let { data, error: dbError } = await supabase
+                            .from('posts')
+                            .select(`
+                                *,
+                                user:users ( user_name, user_avatar )
+                            `)
+                            .order('created_at', { ascending: false }); // Show newest first
+
+                        if (dbError) throw dbError;
+                        posts = data;
+
+                    } catch (dbError) {
+                        console.error('Error fetching from Supabase:', dbError);
+                        error = dbError;
+                    }
+                }
+
+                // === 4. RENDER POSTS TO THE PAGE ===
+                if (loadingIndicator) {
+                    loadingIndicator.style.display = 'none'; // Hide loading message
+                }
+
+                if (error) {
+                    postFeed.innerHTML += '<p style="color: red;">Could not load feed. Check console for errors.</p>';
+                    return;
+                }
+                
+                if (posts.length === 0) {
+                     postFeed.innerHTML += '<p>No posts yet. Be the first!</p>';
+                     return;
+                }
+
+                // Add posts to the feed
+                let postHtml = '';
+                posts.forEach((post, index) => {
+                    post.delay = index * 0.1; // For staggered animation
+                    postHtml += createPostCard(post);
+                });
+                postFeed.innerHTML += postHtml; // Append all new posts
+            }
+
+            // --- Load posts when the page is ready
+            loadPosts();
+
+
+            // === 5. MODAL AND FORM LOGIC (Unchanged) ===
             const createPostBtn = document.getElementById('create-post-btn');
             const modalOverlay = document.getElementById('create-post-modal');
             const modalCloseBtn = document.getElementById('modal-close-btn');
 
-            // 2. Function to open the modal
             const openModal = () => {
-                if (modalOverlay) {
-                    modalOverlay.classList.add('active');
-                }
+                if (modalOverlay) modalOverlay.classList.add('active');
             };
 
-            // 3. Function to close the modal
             const closeModal = () => {
-                if (modalOverlay) {
-                    modalOverlay.classList.remove('active');
-                }
+                if (modalOverlay) modalOverlay.classList.remove('active');
             };
 
-            // 4. Add "click" event listeners
-            
-            // When the "Create Post" button is clicked, open the modal
-            if (createPostBtn) {
-                createPostBtn.addEventListener('click', openModal);
-            }
-
-            // When the "X" (close) button is clicked, close the modal
-            if (modalCloseBtn) {
-                modalCloseBtn.addEventListener('click', closeModal);
-            }
-
-            // Also, close the modal if the user clicks on the dark overlay (good UX)
+            if (createPostBtn) createPostBtn.addEventListener('click', openModal);
+            if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
             if (modalOverlay) {
                 modalOverlay.addEventListener('click', (event) => {
-                    // Only close if the click is on the overlay itself,
-                    // not on the white modal content inside it
-                    if (event.target === modalOverlay) {
-                        closeModal();
+                    if (event.target === modalOverlay) closeModal();
+                });
+            }
+
+            const postImageInput = document.getElementById('post-image-input');
+            const fileNameDisplay = document.getElementById('file-name-display');
+
+            if (postImageInput && fileNameDisplay) {
+                postImageInput.addEventListener('change', () => {
+                    if (postImageInput.files.length > 0) {
+                        fileNameDisplay.textContent = postImageInput.files[0].name;
+                    } else {
+                        fileNameDisplay.textContent = 'No file chosen';
                     }
                 });
             }
