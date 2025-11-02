@@ -1,1195 +1,1202 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CampusHub Dashboard</title>
-    <!-- NEW: Font changed to Poppins for consistency -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CampusHub – Dashboard</title>
 
-    <style>
-        /* === NEW: Design System from Register Page === */
-        :root {
-            --primary: #5E35B1;
-            --secondary: #7E57C2;
-            --primary-gradient: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
-            --bg1: #f3e9fb;
-            --bg2: #ede7f6;
-            --card-bg: #ffffff;
-            --text-color: #333;
-            --text-light: #555;
-            --border-color: #e0e0e0;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.1);
-        }
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        /* === NEW: Dark Mode Styles === */
-        body.dark {
-            --bg1: #1b132d;
-            --bg2: #2a1f47;
-            --card-bg: #2a1f47;
-            --text-color: #f3e9fb;
-            --text-light: #d1c4e9;
-            --border-color: #4a3a6b;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.3);
-        }
+<style>
+/* === Unified Design System === */
+:root {
+  --primary: #5E35B1;
+  --secondary: #7E57C2;
+  --primary-gradient: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+  --bg1: #f3e9fb;
+  --bg2: #ede7f6;
+  --card-bg: #ffffff;
+  --text-color: #333;
+  --text-light: #555;
+  --border-color: #e0e0e0;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
 
-        body {
-            /* NEW: Font and Background */
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(120deg, var(--bg1), var(--bg2));
-            color: var(--text-color);
-            margin: 0;
-            padding-top: 70px;
-            transition: background-color 0.3s, color 0.3s;
-        }
+body.dark {
+  --bg1: #1b132d;
+  --bg2: #2a1f47;
+  --card-bg: #2a1f47;
+  --text-color: #f3e9fb;
+  --text-light: #d1c4e9;
+  --border-color: #4a3a6b;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(120deg, var(--bg1), var(--bg2));
+  color: var(--text-color);
+  transition: background 0.4s, color 0.4s;
+  padding-top: 70px; /* Space for header */
+}
 
-        /* === NEW: Updated Navbar Styling === */
-        .navbar {
-            width: 100%;
-            background: var(--primary-gradient);
-            color: #fff;
-            box-shadow: 0 6px 20px rgba(94, 53, 177, 0.25);
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-        }
+/* === Unified Header === */
+header {
+  height: 70px;
+  background: var(--primary-gradient);
+  color: #fff;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px;
+  box-shadow: 0 6px 20px rgba(94,53,177,0.25);
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+}
+.nav-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  /* Hide menu on smaller screens */
+  @media (max-width: 992px) {
+    display: none;
+  }
+}
+.nav-link {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 500;
+  padding: 10px;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+  opacity: 0.9;
+}
+.nav-link:hover, .nav-link.active {
+  opacity: 1;
+  border-bottom-color: #fff;
+}
+.nav-user-area {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+#themeToggle {
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: #fff;
+  background: none;
+  border: none;
+  transition: transform 0.3s;
+}
+#themeToggle:hover { transform: rotate(20deg); }
+.user-profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+#logout-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 10px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+#logout-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+.cta-button{
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 10px 18px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+.cta-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+/* Mobile Menu Button */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    @media (max-width: 992px) {
+        display: block;
+    }
+}
 
-        .navbar-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 70px;
-        }
+/* Floating Orbs */
+.orb {
+  position: fixed; border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.4;
+  z-index: -1;
+  pointer-events: none;
+}
+.orb-1 { width: 300px; height: 300px; left: 10%; top: 15%; background: var(--primary); animation: float1 8s ease-in-out infinite; }
+.orb-2 { width: 280px; height: 280px; right: 8%; bottom: 10%; background: var(--secondary); animation: float2 9s ease-in-out infinite; }
+@keyframes float1 { 0%,100%{transform:translateY(0)}50%{transform:translateY(25px)} }
+@keyframes float2 { 0%,100%{transform:translateY(0)}50%{transform:translateY(-25px)} }
 
-        .nav-logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #fff;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+/* === Dashboard Layout === */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 25px auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 2.5fr 1fr;
+    gap: 25px;
+}
 
-        .nav-menu {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+@media (max-width: 992px) {
+    .dashboard-container {
+        grid-template-columns: 1fr;
+    }
+    .sidebar {
+        order: -1; /* Move sidebar to top on mobile */
+    }
+}
 
-        .nav-link {
-            text-decoration: none;
-            color: #fff;
-            font-weight: 500;
-            padding: 10px;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
-            border-radius: 4px;
-            opacity: 0.9;
-        }
+h2 {
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+body.dark h2 { color: var(--text-light); }
 
-        .nav-link:hover,
-        .nav-link.active {
-            opacity: 1;
-            border-bottom-color: #fff;
-        }
+/* === Post Card Styling === */
+.post-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease-out forwards;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.post-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-        .nav-user-area {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 20px;
+}
+.post-user-pic {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.post-user-name {
+    font-weight: 600;
+    display: block;
+    color: var(--text-color);
+}
+.post-timestamp {
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
 
-        /* NEW: Theme Toggle Button */
-        #themeToggle {
-            cursor: pointer;
-            font-size: 1.3rem;
-            color: #fff;
-            background: none;
-            border: none;
-            transition: transform 0.3s;
-        }
-        #themeToggle:hover {
-            transform: rotate(20deg);
-        }
+.category-tag {
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 3px 8px;
+    border-radius: 6px;
+    color: white;
+    text-transform: capitalize;
+}
+.lost-found { background-color: #d9534f; }
+.team-up { background-color: #5bc0de; }
+.qa { background-color: #5cb85c; }
+.events { background-color: #6a1b9a; }
+.recommendations { background-color: #FFC107; color: #333; }
 
-        .user-profile-pic {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            object-fit: cover;
-            border: 2px solid rgba(255, 255, 255, 0.8);
-        }
+.post-content { padding: 0 20px 15px; }
+.post-content h3 {
+    margin-bottom: 10px;
+    color: var(--text-color);
+}
+.post-image {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border-color);
+}
+.post-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 15px;
+    padding: 10px 0;
+    font-size: 0.9rem;
+}
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-light);
+}
+.detail-item i {
+    color: var(--primary);
+    width: 16px;
+    text-align: center;
+}
+body.dark .detail-item i { color: var(--secondary); }
 
-        .cta-button {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            padding: 10px 18px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-family: 'Poppins', sans-serif;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-        }
+.post-content p {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
 
-        .cta-button:hover {
-            background: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
-        }
-        
-        /* === Dashboard Layout === */
-        .dashboard-container {
-            max-width: 1200px;
-            margin: 25px auto;
-            padding: 0 20px;
-            display: grid;
-            grid-template-columns: 2.5fr 1fr;
-            gap: 25px;
-        }
+.post-actions {
+    display: flex;
+    background-color: rgba(0,0,0,0.01);
+    border-top: 1px solid var(--border-color);
+}
+body.dark .post-actions { background-color: rgba(0,0,0,0.1); }
 
-        h2 {
-            margin-bottom: 20px;
-            font-weight: 600;
-            color: var(--text-color);
-        }
+.post-actions button {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 15px;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-light);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.post-actions button:hover {
+    background-color: rgba(0,0,0,0.05);
+    color: var(--primary);
+}
+body.dark .post-actions button:hover {
+    background-color: rgba(0,0,0,0.2);
+    color: var(--secondary);
+}
+.post-actions button:not(:last-child) {
+    border-right: 1px solid var(--border-color);
+}
 
-        /* === Post Card Styling (Updated) === */
-        .post-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            margin-bottom: 20px;
-            overflow: hidden;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeIn 0.5s ease-out forwards;
-            transition: all 0.3s ease;
-        }
+/* === Sidebar Styling === */
+.sidebar-widget {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: var(--shadow);
+}
+.sidebar-widget h4 {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary);
+}
+body.dark .sidebar-widget h4 { color: var(--secondary); }
 
-        .post-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-hover);
-        }
+.event-mini-card {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    transition: background-color 0.3s ease;
+    padding: 10px;
+    border-radius: 8px;
+}
+.event-mini-card:hover {
+    background-color: var(--bg1);
+}
+.event-date {
+    background: var(--primary-gradient);
+    color: white;
+    border-radius: 8px;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-weight: 600;
+    padding-top: 5px;
+    flex-shrink: 0;
+}
+.event-date span {
+    font-size: 0.7rem;
+    display: block;
+    opacity: 0.8;
+}
+.event-date strong {
+    font-size: 1.2rem;
+    line-height: 1.1;
+}
+.event-details h5 {
+    font-weight: 600;
+    margin-bottom: 2px;
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+.event-details span {
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+.view-all-link {
+    text-decoration: none;
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+body.dark .view-all-link { color: var(--secondary); }
 
-        .post-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 15px 20px;
-        }
+.trending-topic {
+    display: block;
+    padding: 8px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: var(--text-light);
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+.trending-topic:hover {
+    background: var(--primary-gradient);
+    color: white;
+    padding-left: 12px;
+}
 
-        .post-user-pic {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
+/* === Modal (Pop-up) === */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+.modal-content {
+    background-color: var(--card-bg);
+    padding: 25px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 550px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+    border: 1px solid var(--border-color);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+.modal-header h3 {
+    margin: 0;
+    color: var(--primary);
+}
+body.dark .modal-header h3 { color: var(--secondary); }
 
-        .post-user-name {
-            font-weight: 600;
-            display: block;
-            color: var(--text-color);
-        }
+.modal-close {
+    font-size: 1.3rem;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+.modal-close:hover { color: #d9534f; }
 
-        .post-timestamp {
-            font-size: 0.85rem;
-            color: var(--text-light);
-        }
+.form-group { margin-bottom: 20px; }
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-color);
+}
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    background-color: var(--bg1);
+    color: var(--text-color);
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--primary);
+    background-color: var(--card-bg);
+    box-shadow: 0 0 10px rgba(94, 53, 177, 0.3);
+    outline: none;
+}
+.form-group textarea { resize: vertical; }
 
-        .category-tag {
-            font-weight: 600;
-            font-size: 0.8rem;
-            padding: 3px 8px;
-            border-radius: 6px;
-            color: white;
-        }
-        .lost-found { background-color: #d9534f; }
-        .team-up { background-color: #5bc0de; }
-        .qa { background-color: #5cb85c; }
-        .events { background-color: #6a1b9a; }
-        .recommendations { background-color: #FFC107; color: #333; }
+/* File Upload Button */
+input[type="file"] { display: none; }
+.file-upload-label {
+    display: block; width: 100%; padding: 12px; border: 2px dashed var(--border-color);
+    border-radius: 8px; text-align: center; font-weight: 500; color: var(--text-light);
+    cursor: pointer; transition: all 0.3s ease;
+    margin-top: 6px;
+}
+.file-upload-label:hover {
+    border-color: var(--primary); background-color: var(--bg1); color: var(--primary);
+}
+#file-name-display { font-size: 0.85rem; color: var(--text-light); margin-top: 5px; }
 
-        .post-content {
-            padding: 0 20px 15px;
-        }
+.modal-form button[type="submit"] {
+    width: 100%;
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    padding: 14px 22px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    transition: all 0.3s;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+.modal-form button[type="submit"]:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(94, 53, 177, 0.3);
+}
+.modal-form button[type="submit"]:disabled {
+    background: var(--text-light);
+    cursor: not-allowed;
+}
 
-        .post-details-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px 15px;
-            padding: 10px 0;
-            font-size: 0.9rem;
-        }
-        .detail-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-light);
-        }
-        .detail-item i {
-            color: var(--primary);
-            width: 16px;
-            text-align: center;
-        }
-        
-        .post-image {
-            width: 100%;
-            height: auto;
-            max-height: 400px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border: 1px solid var(--border-color);
-        }
-        
-        .post-content h3 {
-            margin-bottom: 10px;
-            color: var(--text-color);
-        }
-        .post-content p {
-            color: var(--text-light);
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        .post-actions {
-            display: flex;
-            background-color: transparent;
-            border-top: 1px solid var(--border-color);
-        }
-        .post-actions button {
-            flex: 1;
-            background: none;
-            border: none;
-            padding: 15px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text-light);
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: background-color 0.2s ease, color 0.2s ease;
-        }
-        .post-actions button:hover {
-            background-color: var(--bg1);
-            color: var(--primary);
-        }
-        .post-actions button:not(:last-child) {
-            border-right: 1px solid var(--border-color);
-        }
-
-        /* === Sidebar Styling (Updated) === */
-        .sidebar {
-            min-width: 280px;
-        }
-        
-        .sidebar-widget {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 25px;
-            transition: background-color 0.3s, border-color 0.3s;
-        }
-        .sidebar-widget h4 {
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--primary);
-        }
-
-        .event-mini-card {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-            transition: background-color 0.3s ease;
-            padding: 10px;
-            border-radius: 8px;
-        }
-        .event-mini-card:hover {
-            background-color: var(--bg1);
-        }
-        .event-date {
-            background: var(--primary-gradient);
-            color: white;
-            border-radius: 8px;
-            width: 50px;
-            height: 50px;
-            text-align: center;
-            font-weight: 600;
-            padding-top: 5px;
-            flex-shrink: 0;
-        }
-        .event-date span {
-            font-size: 0.7rem;
-            display: block;
-            opacity: 0.8;
-        }
-        .event-date strong {
-            font-size: 1.2rem;
-            line-height: 1.1;
-        }
-        .event-details h5 {
-            font-weight: 600;
-            margin-bottom: 2px;
-            font-size: 0.95rem;
-            color: var(--text-color);
-        }
-        .event-details span {
-            font-size: 0.85rem;
-            color: var(--text-light);
-        }
-
-        .view-all-link {
-            text-decoration: none;
-            color: var(--primary);
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .trending-topic {
-            display: block;
-            padding: 8px;
-            border-radius: 6px;
-            text-decoration: none;
-            color: var(--text-light);
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        .trending-topic:hover {
-            background: var(--primary-gradient);
-            color: white;
-            padding-left: 12px;
-        }
-
-        /* === Modal (Pop-up) (Updated) === */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            z-index: 2000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .modal-content {
-            background-color: var(--card-bg);
-            padding: 30px;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transform: scale(0.95);
-            transition: transform 0.3s ease, background-color 0.3s;
-        }
-
-        .modal-overlay.active .modal-content {
-            transform: scale(1);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-        .modal-header h3 {
-            color: var(--primary);
-        }
-        .modal-close {
-            font-size: 1.3rem;
-            color: var(--text-light);
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-        .modal-close:hover {
-            color: #d9534f;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-color);
-        }
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.95rem;
-            background-color: var(--bg1);
-            color: var(--text-color);
-            transition: all 0.3s;
-        }
-        .form-group textarea {
-            resize: vertical;
-        }
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: var(--primary);
-            background-color: var(--card-bg);
-            box-shadow: 0 0 10px rgba(94, 53, 177, 0.3);
-            outline: none;
-        }
-        
-        .file-upload-label {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            border: 2px dashed var(--border-color);
-            border-radius: 8px;
-            text-align: center;
-            font-weight: 500;
-            color: var(--text-light);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .file-upload-label:hover {
-            border-color: var(--primary);
-            background-color: var(--bg1);
-            color: var(--primary);
-        }
-        .file-upload-label i {
-            margin-right: 8px;
-        }
-        
-        #file-name-display {
-            font-size: 0.85rem;
-            color: var(--text-light);
-            margin-top: 10px;
-            display: block;
-        }
-
-        /* NEW: Modal CTA Button */
-        .modal-form .cta-button {
-            width: 100%;
-            padding: 14px;
-            font-size: 1rem;
-            background: var(--primary-gradient);
-            box-shadow: 0 8px 22px rgba(94, 53, 177, 0.25);
-        }
-        .modal-form .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 28px rgba(94, 53, 177, 0.35);
-        }
-
-        /* === Responsive Design === */
-        @media (max-width: 992px) {
-            .dashboard-container {
-                grid-template-columns: 1fr;
-            }
-            .sidebar {
-                order: -1;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .nav-menu {
-                display: none;
-            }
-            .nav-logo {
-                font-size: 1.3rem;
-            }
-            .cta-button span {
-                display: none;
-            }
-            .cta-button {
-                padding: 10px;
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-                font-size: 0.9rem;
-            }
-            .cta-button .fa-plus {
-                margin: 0;
-            }
-            .dashboard-container {
-                padding: 0 10px;
-                margin-top: 15px;
-            }
-            .post-content h3 {
-                font-size: 1.1rem;
-            }
-            .post-actions button {
-                font-size: 0.8rem;
-                padding: 12px 5px;
-                gap: 5px;
-            }
-        }
-
-    </style>
+</style>
 </head>
 <body>
 
-    <!-- =======================
-    NAVBAR (Restyled)
-    ======================== -->
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a href="campushub.html" class="nav-logo">
-                <i class="fa-solid fa-graduation-cap"></i>
-                CampusHub
-            </a>
-            <div class="nav-menu">
-                <a href="campushub.html" class="nav-link active">Home</a>
-                <a href="CampusLostdyanmic.html" class="nav-link">Lost & Found</a>
-                <a href="Teamup.html" class="nav-link">Team Up</a>
-                <a href="event.html" class="nav-link">Events</a>
-                <a href="qa_with_answers_share_answer.html" class="nav-link">Q&A</a>
-                <a href="recommendations_supabase_fixed.html" class="nav-link">Recommendations</a>
-                <a href="contact.html" class="nav-link">Contact</a>
-            </div>
-            <div class="nav-user-area">
-                <button class="cta-button" id="create-post-btn">
-                    <i class="fas fa-plus"></i>
-                    <span>Create Post</span>
-                </button>
-                <!-- NEW: Theme Toggle Button Added -->
-                <button id="themeToggle"><i class="fa-solid fa-moon"></i></button>
-                <img src="https://placehold.co/40x40/FFFFFF/5E35B1?text=PS" alt="User Profile" class="user-profile-pic" title="Priya Sharma">
-            </div>
-        </div>
-    </nav>
+<!-- === Unified Header === -->
+<header>
+  <a href="campushub.html" class="nav-logo">
+    <i class="fa-solid fa-graduation-cap"></i> CampusHub
+  </a>
+  <nav class="nav-menu" id="nav-menu-links">
+    <a href="campushub.html" class="nav-link active">Home</a>
+    <a href="CampusLostdyanmic.html" class="nav-link">Lost & Found</a>
+    <a href="Teamup.html" class="nav-link">Team Up</a>
+    <a href="event.html" class="nav-link">Events</a>
+    <a href="qa_with_answers_share_answer.html" class="nav-link">Q&A</a>
+    <a href="recommendations_supabase_fixed.html" class="nav-link">Recommendations</a>
+    <a href="contact.html" class="nav-link">Contact</a>
+  </nav>
+  <div class="nav-user-area" id="nav-user-auth">
+    <button id="create-post-btn" class="cta-button"><i class="fa-solid fa-plus"></i> Create Post</button>
+    <button id="themeToggle"><i class="fa-solid fa-moon"></i></button>
+    <a href="CampusprofileDynamic.html">
+        <img src="https://placehold.co/40x40/FFFFFF/5E35B1?text=U" alt="User Profile" class="user-profile-pic" id="user-profile-pic-nav" title="My Profile">
+    </a>
+    <button id="logout-button" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" id="mobile-menu-toggle"><i class="fa-solid fa-bars"></i></button>
+  </div>
+</header>
 
-    <!-- =======================
-    MAIN DASHBOARD
-    ======================== -->
-    <main class="dashboard-container">
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- =======================
+MAIN DASHBOARD
+======================== -->
+<main class="dashboard-container">
+    
+    <!-- === Left Side: Post Feed === -->
+    <section class="feed" id="post-feed">
+        <h2>Campus Feed</h2>
+        <p id="feed-loading">Loading Campus Feed...</p>
+    </section>
+
+    <!-- === Right Side: Sidebar === -->
+    <aside class="sidebar">
+        <div class="sidebar-widget">
+            <h4><i class="fas fa-calendar-alt"></i> Upcoming Events</h4>
+            <div id="sidebar-events-list">
+                <!-- Events will be loaded here by JS -->
+                <p id="sidebar-events-loading">Loading events...</p>
+            </div>
+            <a href="event.html" class="view-all-link">View all events &rarr;</a>
+        </div>
         
-        <section class="feed" id="post-feed">
-            <h2>Campus Feed</h2>
-            <p id="feed-loading">Loading Campus Feed...</p>
-        </section>
-
-        <aside class="sidebar">
-            <div class="sidebar-widget">
-                <h4><i class="fas fa-calendar-alt"></i> Upcoming Events</h4>
-                <div class="event-mini-card">
-                    <div class="event-date">
-                        <span>OCT</span>
-                        <strong>28</strong>
-                    </div>
-                    <div class="event-details">
-                        <h5>CodeStorm Hackathon 2025</h5>
-                        <span>Auditorium, 9:00 AM</span>
-                    </div>
-                </div>
-                <div class="event-mini-card">
-                    <div class="event-date">
-                        <span>NOV</span>
-                        <strong>02</strong>
-                    </div>
-                    <div class="event-details">
-                        <h5>Guest Lecture: AI in Finance</h5>
-                        <span>Seminar Hall 3, 11:00 AM</span>
-                    </div>
-                </div>
-                <a href="event.html" class="view-all-link">View all events &rarr;</a>
-            </div>
-            
-            <div class="sidebar-widget">
-                <h4><i class="fas fa-fire"></i> Trending Topics</h4>
-                <a href="#" class="trending-topic">#ExamResults</a>
-                <a href="#" class="trending-topic">#Symphony2025</a>
-                <a href="#" class="trending-topic">#PlacementDrive</a>
-            </div>
-        </aside>
-
-    </main>
-
-    <!-- =======================
-    CREATE POST MODAL (Restyled)
-    ======================== -->
-    <div class="modal-overlay" id="create-post-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Create a New Post</h3>
-                <i class="fas fa-times modal-close" id="modal-close-btn"></i>
-            </div>
-            <form class="modal-form" onsubmit="handlePostSubmit(event);">
-                <div class="form-group">
-                    <label for="post-title">Title</label>
-                    <input type="text" id="post-title" placeholder="e.g., 'Lost my ID card'" required>
-                </div>
-                <div class="form-group">
-                    <label for="post-category">Category</label>
-                    <select id="post-category" required>
-                        <option value="qa">Q&A</option>
-                        <option value="recommendations">Recommendation</option>
-                        <option value="lost-found">Lost & Found</option>
-                        <option value="team-up">Team Up</option>
-                        <option value="events">Events</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="post-description">Description</label>
-                    <textarea id="post-description" rows="5" placeholder="Share more details..." required></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="post-image-input" class="file-upload-label">
-                        <i class="fas fa-upload"></i> Upload an Image
-                    </label>
-                    <input type="file" id="post-image-input" accept="image/*">
-                    <span id="file-name-display">No file chosen</span>
-                </div>
-
-                <div class="form-group" id="lf-status-group" style="display: none;">
-                    <label for="lf-status">Status</label>
-                    <select id="lf-status">
-                        <option value="lost">I Lost Something</option>
-                        <option value="found">I Found Something</option>
-                    </select>
-                </div>
-                
-                <button type="submit" class="cta-button" id="publish-post-btn">Publish Post</button>
-            </form>
+        <div class="sidebar-widget">
+            <h4><i class="fas fa-fire"></i> Trending Topics</h4>
+            <!-- This can be made dynamic later -->
+            <a href="#" class="trending-topic">#ExamResults</a>
+            <a href="#" class="trending-topic">#Hackathon2025</a>
+            <a href="#" class="trending-topic">#PlacementDrive</a>
         </div>
+    </aside>
+
+</main>
+
+<!-- =======================
+CREATE POST MODAL (Hidden by default)
+======================== -->
+<div class="modal-overlay" id="create-post-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Create a New Post</h3>
+            <i class="fas fa-times modal-close" id="modal-close-btn"></i>
+        </div>
+        
+        <form class="modal-form" id="createPostForm">
+            <div class="form-group">
+                <label for="post-category">Category</label>
+                <select id="post-category" required>
+                    <option value="" disabled selected>-- Select a category --</option>
+                    <option value="lost-found">Lost & Found</option>
+                    <option value="team-up">Team Up</option>
+                    <option value="events">Event</option>
+                    <option value="questions">Q&A</option>
+                    <option value="recommendations">Recommendation</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="post-title">Title</label>
+                <input type="text" id="post-title" placeholder="e.g., 'Lost my ID card'" required>
+            </div>
+            
+            <!-- Dynamic fields will be injected here by JS -->
+            <div id="dynamic-form-fields"></div>
+            
+            <div class="form-group">
+                <label for="post-description">Description / Content</label>
+                <textarea id="post-description" rows="5" placeholder="Share more details..." required></textarea>
+            </div>
+            
+            <!-- File Upload (conditionally shown) -->
+            <div class="form-group" id="file-upload-group" style="display: none;">
+                <label for="post-image-upload" class="file-upload-label">
+                    <i class="fas fa-upload"></i> Upload an Image
+                </label>
+                <input type="file" id="post-image-upload" accept="image/*">
+                <span id="file-name-display">No file chosen</span>
+            </div>
+            
+            <button type="submit" class="cta-button" id="publish-post-btn">Publish Post</button>
+        </form>
     </div>
+</div>
 
-    <!-- 
-      ===============================================
-      SUPABASE JAVASCRIPT LOGIC
-      ===============================================
-    -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
 
-            // === 1. SUPABASE CLIENT INITIALIZATION ===
-            const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-            const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+<!-- Supabase -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // === 1. SUPABASE CLIENT INITIALIZATION ===
+    const SUPABASE_URL = 'https://tuucgqbyegerndyviefw.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1dWNncWJ5ZWdlcm5keXZpZWZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1NTc1NTksImV4cCI6MjA3NzEzMzU1OX0.fImUoHr86_5MdkDEWu8JXhjSaG2oxbq0IoGhZ6XeH-0';
+    
+    let supabase;
+    let currentUser = null;
+    
+    try {
+        if (SUPABASE_URL !== 'https://tuucgqbyegerndyviefw.supabase.co' && SUPABASE_ANON_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1dWNncWJ5ZWdlcm5keXZpZWZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1NTc1NTksImV4cCI6MjA3NzEzMzU1OX0.fImUoHr86_5MdkDEWu8JXhjSaG2oxbq0IoGhZ6XeH-0') {
+             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } else {
+            console.warn('Supabase keys not provided. App will not function.');
+            document.getElementById('feed-loading').textContent = 'Error: Supabase client not configured.';
+            document.getElementById('feed-loading').style.color = 'red';
+        }
+    } catch (error) {
+        console.error('Error initializing Supabase:', error);
+    }
+    
+    // === 2. AUTHENTICATION CHECK ===
+    async function checkAuth() {
+        if (!supabase) return;
+        
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (session) {
+            currentUser = session.user;
+            loadProfilePic(currentUser);
+            loadAllPosts(); // Load main feed
+            loadSidebarEvents(); // Load sidebar events
+        } else {
+            window.location.href = 'index.html';
+        }
+    }
+    
+    function loadProfilePic(user) {
+        const profilePic = document.getElementById('user-profile-pic-nav');
+        if (user.user_metadata && user.user_metadata.profile_image) {
+            profilePic.src = user.user_metadata.profile_image;
+        } else {
+            const initials = (user.user_metadata.fullname || user.email)[0].toUpperCase();
+            profilePic.src = `https://placehold.co/40x40/FFFFFF/5E35B1?text=${initials}`;
+        }
+        profilePic.title = user.user_metadata.fullname || user.email;
+    }
+    
+    const logoutButton = document.getElementById('logout-button');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', async () => {
+            if (!supabase) return;
+            await supabase.auth.signOut();
+            window.location.href = 'index.html';
+        });
+    }
+    
+    // === 3. THEME TOGGLE ===
+    const themeBtn = document.getElementById('themeToggle');
+    const body = document.body;
+    if (localStorage.getItem("theme") === "dark") {
+      body.classList.add("dark");
+      themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+    }
+    themeBtn.onclick = () => {
+      body.classList.toggle("dark");
+      const isDark = body.classList.contains("dark");
+      themeBtn.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+      localStorage.setItem("theme", isDark ? 'dark' : 'light');
+    };
+
+    // === 4. LOAD ALL POSTS (Main Feed) ===
+    const postFeed = document.getElementById('post-feed');
+    const loadingIndicator = document.getElementById('feed-loading');
+
+    async function loadAllPosts() {
+        if (!supabase) return;
+        loadingIndicator.style.display = 'block';
+        
+        let allPosts = [];
+        let error = null;
+
+        try {
+            const commonSelect = `*, user:users ( user_name, user_avatar )`;
+            const order = { ascending: false };
+            const limit = 10;
+
+            // 1. Fetch from 'events'
+            const { data: events, error: eError } = await supabase
+                .from('events').select(commonSelect).order('created_at', order).limit(limit);
+            if (eError) throw eError;
+            allPosts.push(...events.map(p => ({ ...p, post_type: 'events' })));
+
+            // 2. Fetch from 'lost_found'
+            const { data: lostFound, error: lfError } = await supabase
+                .from('lost_found').select(commonSelect).order('created_at', order).limit(limit);
+            if (lfError) throw lfError;
+            allPosts.push(...lostFound.map(p => ({ ...p, post_type: 'lost_found' })));
+
+            // 3. Fetch from 'team_up'
+            const { data: teamUp, error: tuError } = await supabase
+                .from('team_up').select(commonSelect).order('created_at', order).limit(limit);
+            if (tuError) throw tuError;
+            allPosts.push(...teamUp.map(p => ({ ...p, post_type: 'team_up' })));
             
-            let supabase;
-            try {
-                if (SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY') {
-                     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                } else {
-                    console.warn('Supabase keys not provided. Using mock data.');
-                }
-            } catch (error) {
-                console.error('Error initializing Supabase:', error);
-            }
-
-            // --- MOCK DATA FOR DEMO ---
-            const USE_MOCK_DATA = true;
+            // 4. Fetch from 'questions'
+            const { data: questions, error: qError } = await supabase
+                .from('questions').select(commonSelect).order('created_at', order).limit(limit);
+            if (qError) throw qError;
+            allPosts.push(...questions.map(p => ({ ...p, post_type: 'questions' })));
             
-            const MOCK_DATA = [
-                {
-                    post_type: 'events',
-                    event_id: 1,
-                    title: 'CodeStorm Hackathon 2025 Registrations Open!',
-                    description: 'Get ready for the biggest coding event of the year. Registrations are now open. Click the link in our bio to sign up!',
-                    image_url: 'https://placehold.co/600x350/5E35B1/FFFFFF?text=CodeStorm+Hackathon+Poster',
-                    created_at: new Date(Date.now() - 30 * 60000).toISOString(), 
-                    date: '2025-10-28T09:00:00',
-                    venue: 'Main Auditorium',
-                    likes: 12, 
-                    comment_count: 3,
-                    user: {
-                        user_name: 'Comp. Sci. Dept.',
-                        user_avatar: 'https://placehold.co/45x45/FFC107/333?text=CS'
-                    }
-                },
-                {
-                    post_type: 'lost_found',
-                    lf_id: 1,
-                    title: 'Lost: Blue Cello Water Bottle',
-                    description: "Hey everyone, I think I left my blue Cello water bottle in the library's 2nd-floor reading room. Has anyone seen it?",
-                    image_url: 'https://placehold.co/600x400/eeeeee/d9534f?text=Lost+Water+Bottle',
-                    created_at: new Date(Date.now() - 120 * 60000).toISOString(), 
-                    location: "Library, 2nd Floor",
-                    status: "lost",
-                    likes: 0,
-                    comment_count: 2,
-                    user: {
-                        user_name: 'Priya Sharma',
-                        user_avatar: 'https://placehold.co/45x45/d9534f/FFFFFF?text=PS'
-                    }
-                },
-                {
-                    post_type: 'team_up',
-                    team_id: 1,
-                    title: "Need Teammates for 'Smart India Hackathon'",
-                    event_name: 'Smart India Hackathon',
-                    role_needed: 'Backend Developer (Node/Flask)',
-                    description: "We're forming a team for the SIH. Looking for one backend developer and one UI/UX designer. DM me if interested!",
-                    created_at: new Date(Date.now() - 300 * 60000).toISOString(), 
-                    image_url: null,
-                    likes: 5,
-                    comment_count: 1,
-                    user: {
-                        user_name: 'Rohan Verma',
-                        user_avatar: 'https://placehold.co/45x45/5bc0de/FFFFFF?text=RV'
-                    }
-                },
-                {
-                    post_type: 'questions',
-                    q_id: 1,
-                    title: 'Best place for biryani near campus?',
-                    content: 'New to the area. Need recommendations for good and affordable biryani. What\'s the best spot?',
-                    created_at: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
-                    image_url: null,
-                    likes: 11,
-                    comment_count: 7, 
-                    user: {
-                        user_name: 'Aarav Singh',
-                        user_avatar: 'https://placehold.co/45x45/5cb85c/FFFFFF?text=AS'
-                    }
-                },
-                 {
-                    post_type: 'recommendations',
-                    rec_id: 1,
-                    title: 'Must Read: "The Silent Patient"',
-                    description: 'Just finished this book, total psychological thriller! Highly recommend if you need a break from textbooks.',
-                    category: 'book',
-                    created_at: new Date(Date.now() - 48 * 3600 * 1000).toISOString(),
-                    image_url: 'https://placehold.co/600x400/7E57C2/FFFFFF?text=Book+Recommendation', 
-                    likes: 22,
-                    comment_count: 4,
-                    user: {
-                        user_name: 'Neha Reddy',
-                        user_avatar: 'https://placehold.co/45x45/7E57C2/FFFFFF?text=NR'
-                    }
-                },
-            ];
-            // --- END MOCK DATA ---
+            // 5. Fetch from 'recommendations'
+            const { data: recs, error: recError } = await supabase
+                .from('recommendations').select(commonSelect).order('created_at', order).limit(limit);
+            if (recError) throw recError;
+            allPosts.push(...recs.map(p => ({ ...p, post_type: 'recommendations' })));
 
+            // 6. Sort all combined posts by date
+            allPosts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-            // === 2. HELPER FUNCTIONS ===
-            function timeAgo(isoDate) {
-                const date = new Date(isoDate);
-                const seconds = Math.floor((new Date() - date) / 1000);
-                let interval = seconds / 31536000;
-                if (interval > 1) return Math.floor(interval) + " years ago";
-                interval = seconds / 2592000;
-                if (interval > 1) return Math.floor(interval) + " months ago";
-                interval = seconds / 86400;
-                if (interval > 1) return Math.floor(interval) + " days ago";
-                interval = seconds / 3600;
-                if (interval > 1) return Math.floor(interval) + " hours ago";
-                interval = seconds / 60;
-                if (interval > 1) return Math.floor(interval) + " minutes ago";
-                return Math.floor(seconds) + " seconds ago";
-            }
+        } catch (dbError) {
+            console.error('Error fetching posts:', dbError);
+            error = dbError;
+        }
 
-            function getCategoryTag(category) {
-                const categoryMap = {
-                    'lost_found': 'lost-found',
-                    'team_up': 'team-up',
-                    'qa': 'qa',
-                    'events': 'events',
-                    'questions': 'qa',
-                    'recommendations': 'recommendations'
-                };
-                return categoryMap[category] || 'qa';
-            }
-            
-            function createPostCard(post) {
-                const postData = {
-                    id: post.event_id || post.lf_id || post.team_id || post.q_id || post.rec_id,
-                    title: post.title,
-                    description: post.description || post.content,
-                    imageUrl: post.image_url,
-                    createdAt: post.created_at,
-                    user: post.user || { user_name: 'Anonymous', user_avatar: 'https://placehold.co/45x45/ccc/FFFFFF?text=?' },
-                    likes: post.likes || 0,
-                    commentCount: post.comment_count || 0,
-                    delay: post.delay || 0,
-                    type: post.post_type
-                };
-                
-                switch (post.post_type) {
-                    case 'events': return createEventPostCard(postData, post);
-                    case 'lost_found': return createLostFoundPostCard(postData, post);
-                    case 'team_up': return createTeamUpPostCard(postData, post);
-                    case 'questions': return createQuestionPostCard(postData, post);
-                    case 'recommendations': return createRecommendationPostCard(postData, post);
-                    default: console.warn('Unknown post type:', post); return '';
-                }
-            }
-            
-            function createBaseCard(data, detailsHtml) {
-                const categoryClass = getCategoryTag(data.type);
-                const categoryName = categoryClass.replace('-', ' ');
-                const likeText = data.likes > 0 ? `(${data.likes})` : '';
-                const commentText = data.commentCount > 0 ? `Comment (${data.commentCount})` : 'Comment';
-                const likeButton = data.type === 'events' 
-                    ? `<button><i class="fas fa-star"></i> Interested ${likeText}</button>`
-                    : `<button><i class="fas fa-thumbs-up"></i> Like ${likeText}</button>`;
-                const imageHtml = data.imageUrl 
-                    ? `<img src="${data.imageUrl}" alt="Post Image" class="post-image">` 
-                    : '';
-                
-                return `
-                    <div class="post-card" style="animation-delay: ${data.delay}s">
-                        <div class="post-header">
-                            <img src="${data.user.user_avatar}" alt="User" class="post-user-pic" title="${data.user.user_name}">
-                            <div>
-                                <span class="post-user-name">${data.user.user_name}</span>
-                                <span class="post-timestamp">
-                                    ${timeAgo(data.createdAt)} in <span class="category-tag ${categoryClass}">${categoryName}</span>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="post-content">
-                            <h3>${data.title}</h3>
-                            ${imageHtml}
-                            ${detailsHtml}
-                            <p>${data.description}</p>
-                        </div>
-                        <div class="post-actions">
-                            ${likeButton}
-                            <button><i class="fas fa-comment"></i> ${commentText}</button>
-                            <button><i class="fas fa-share"></i> Share</button>
-                        </div>
+        // === 7. RENDER POSTS ===
+        loadingIndicator.style.display = 'none';
+
+        if (error) {
+            postFeed.innerHTML += '<p style="color: red;">Could not load feed. Check console for errors.</p>';
+            return;
+        }
+        
+        if (allPosts.length === 0) {
+             postFeed.innerHTML += '<p>No posts yet. Be the first!</p>';
+             return;
+        }
+
+        let postHtml = '';
+        allPosts.forEach((post, index) => {
+            post.delay = index * 0.1; // For staggered animation
+            postHtml += createPostCard(post);
+        });
+        postFeed.innerHTML += postHtml; // Append all new posts
+    }
+    
+    // === 8. LOAD SIDEBAR EVENTS ===
+    const sidebarEventsList = document.getElementById('sidebar-events-list');
+    const sidebarEventsLoading = document.getElementById('sidebar-events-loading');
+
+    async function loadSidebarEvents() {
+        if (!supabase) return;
+        sidebarEventsLoading.style.display = 'block';
+
+        const { data, error } = await supabase
+            .from('events')
+            .select('event_id, title, date, venue')
+            .order('date', { ascending: true }) // Show upcoming
+            .limit(3); // Only show 3
+
+        sidebarEventsLoading.style.display = 'none';
+
+        if (error || !data) {
+            sidebarEventsList.innerHTML = '<p style="font-size: 0.9rem; color: var(--text-light);">Could not load events.</p>';
+            return;
+        }
+        
+        if (data.length === 0) {
+            sidebarEventsList.innerHTML = '<p style="font-size: 0.9rem; color: var(--text-light);">No upcoming events.</p>';
+            return;
+        }
+
+        sidebarEventsList.innerHTML = ''; // Clear loading
+        data.forEach(event => {
+            const eventDate = new Date(event.date);
+            const month = eventDate.toLocaleString('default', { month: 'short' }).toUpperCase();
+            const day = eventDate.getDate();
+
+            sidebarEventsList.innerHTML += `
+                <div class="event-mini-card">
+                    <div class="event-date">
+                        <span>${month}</span>
+                        <strong>${day}</strong>
+                    </div>
+                    <div class="event-details">
+                        <h5>${event.title}</h5>
+                        <span>${event.venue || 'TBA'}</span>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // === 9. POST CARD CREATION HELPERS ===
+    
+    function timeAgo(isoDate) {
+        if (!isoDate) return 'just now';
+        const date = new Date(isoDate);
+        const seconds = Math.floor((new Date() - date) / 1000);
+        let interval = seconds / 31536000;
+        if (interval > 1) return Math.floor(interval) + " years ago";
+        interval = seconds / 2592000;
+        if (interval > 1) return Math.floor(interval) + " months ago";
+        interval = seconds / 86400;
+        if (interval > 1) return Math.floor(interval) + " days ago";
+        interval = seconds / 3600;
+        if (interval > 1) return Math.floor(interval) + " hours ago";
+        interval = seconds / 60;
+        if (interval > 1) return Math.floor(interval) + " minutes ago";
+        return Math.max(0, Math.floor(seconds)) + " seconds ago";
+    }
+
+    function getCategoryTag(category) {
+        const categoryMap = {
+            'lost_found': 'lost-found',
+            'team_up': 'team-up',
+            'qa': 'qa',
+            'events': 'events',
+            'questions': 'qa',
+            'recommendations': 'recommendations'
+        };
+        return categoryMap[category] || 'qa';
+    }
+
+    function createPostCard(post) {
+        const postData = {
+            id: post.event_id || post.lf_id || post.team_id || post.q_id || post.rec_id,
+            title: post.title,
+            description: post.description || post.content,
+            imageUrl: post.image_url,
+            createdAt: post.created_at,
+            user: post.user || { user_name: 'Anonymous', user_avatar: 'https://placehold.co/45x45/ccc/FFFFFF?text=?' },
+            likes: post.likes || 0,
+            commentCount: post.comment_count || 0,
+            delay: post.delay || 0,
+            type: post.post_type
+        };
+        
+        let detailsHtml = '';
+        switch (post.post_type) {
+            case 'events':
+                const eventDate = new Date(post.date);
+                detailsHtml = `
+                    <div class="post-details-grid">
+                        <div class="detail-item"><i class="fas fa-calendar-day"></i><span>${eventDate.toLocaleDateString()}</span></div>
+                        <div class="detail-item"><i class="fas fa-clock"></i><span>${eventDate.toLocaleTimeString()}</span></div>
+                        <div class="detail-item" style="grid-column: 1 / -1;"><i class="fas fa-map-marker-alt"></i><span>${post.venue || 'TBD'}</span></div>
+                    </div>`;
+                break;
+            case 'lost_found':
+                 detailsHtml = `
+                    <div class="post-details-grid">
+                        <div class="detail-item"><i class="fas fa-search-location"></i><span>Location: ${post.location || 'N/A'}</span></div>
+                        <div class="detail-item"><i class="fas fa-exclamation-circle"></i><span style="text-transform: capitalize; font-weight: 600;">Status: ${post.status || 'N/A'}</span></div>
+                    </div>`;
+                break;
+            case 'team_up':
+                detailsHtml = `
+                    <div class="post-details-grid">
+                        <div class="detail-item"><i class="fas fa-trophy"></i><span>Event: ${post.event_name || 'N/A'}</span></div>
+                        <div class="detail-item"><i class="fas fa-user-plus"></i><span>Role: ${post.role_needed || 'N/A'}</span></div>
+                    </div>`;
+                break;
+            case 'recommendations':
+                detailsHtml = `
+                    <div class="post-details-grid">
+                        <div class="detail-item" style="grid-column: 1 / -1;"><i class="fas fa-tag"></i><span style="text-transform: capitalize;">Category: ${post.category || 'General'}</span></div>
+                    </div>`;
+                break;
+            case 'questions':
+            default:
+                detailsHtml = ''; // No extra details for Q&A
+                break;
+        }
+        
+        return createBaseCard(postData, detailsHtml);
+    }
+    
+    function createBaseCard(data, detailsHtml) {
+        const categoryClass = getCategoryTag(data.type);
+        const categoryName = categoryClass.replace('-', ' ');
+        
+        const likeText = data.likes > 0 ? `(${data.likes})` : '';
+        const commentText = data.commentCount > 0 ? `Comment (${data.commentCount})` : 'Comment';
+        
+        const likeButton = (data.type === 'events' || data.type === 'recommendations')
+            ? `<button><i class="fas fa-star"></i> Like ${likeText}</button>`
+            : `<button><i class="fas fa-thumbs-up"></i> Like ${likeText}</button>`;
+        
+        const imageHtml = data.imageUrl 
+            ? `<img src="${data.imageUrl}" alt="Post Image" class="post-image" onerror="this.style.display='none'">` 
+            : '';
+        
+        const placeholderAvatar = `https://placehold.co/45x45/7E57C2/FFFFFF?text=${data.user.user_name[0].toUpperCase()}`;
+        
+        return `
+            <div class="post-card" style="animation-delay: ${data.delay}s">
+                <div class="post-header">
+                    <img src="${data.user.user_avatar || placeholderAvatar}" alt="User" class="post-user-pic" onerror="this.src='${placeholderAvatar}'">
+                    <div>
+                        <span class="post-user-name">${data.user.user_name}</span>
+                        <span class="post-timestamp">
+                            ${timeAgo(data.createdAt)} in <span class="category-tag ${categoryClass}">${categoryName}</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <h3>${data.title}</h3>
+                    ${imageHtml}
+                    ${detailsHtml}
+                    <p>${data.description}</p>
+                </div>
+                <div class="post-actions">
+                    ${likeButton}
+                    <button><i class="fas fa-comment"></i> ${commentText}</button>
+                    <button><i class="fas fa-share"></i> Share</button>
+                </div>
+            </div>
+        `;
+    }
+
+    // === 10. CREATE POST MODAL LOGIC ===
+    const createPostBtn = document.getElementById('create-post-btn');
+    const modalOverlay = document.getElementById('create-post-modal');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+    const createPostForm = document.getElementById('createPostForm');
+    const categorySelect = document.getElementById('post-category');
+    const dynamicFieldsContainer = document.getElementById('dynamic-form-fields');
+    const fileUploadGroup = document.getElementById('file-upload-group');
+    const postImageUpload = document.getElementById('post-image-upload');
+    const fileNameDisplay = document.getElementById('file-name-display');
+    const publishPostBtn = document.getElementById('publish-post-btn');
+
+    // Modal Open/Close
+    createPostBtn.addEventListener('click', () => modalOverlay.classList.add('active'));
+    modalCloseBtn.addEventListener('click', () => modalOverlay.classList.remove('active'));
+    modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) modalOverlay.classList.remove('active');
+    });
+    
+    // File upload display name
+    postImageUpload.addEventListener('change', () => {
+        fileNameDisplay.textContent = postImageUpload.files.length > 0
+            ? postImageUpload.files[0].name
+            : 'No file chosen';
+    });
+
+    // Dynamic Form Fields
+    categorySelect.addEventListener('change', () => {
+        const category = categorySelect.value;
+        dynamicFieldsContainer.innerHTML = ''; // Clear old fields
+        fileUploadGroup.style.display = 'none'; // Hide file upload by default
+        
+        switch(category) {
+            case 'lost-found':
+                fileUploadGroup.style.display = 'block';
+                dynamicFieldsContainer.innerHTML = `
+                    <div class="form-group">
+                        <label for="post-location">Location Found/Lost</label>
+                        <input type="text" id="post-location" placeholder="e.g., 'Library, 2nd Floor'" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="post-status">Status</label>
+                        <select id="post-status" required>
+                            <option value="lost">I Lost Something</option>
+                            <option value="found">I Found Something</option>
+                        </select>
                     </div>
                 `;
-            }
+                break;
+            case 'team-up':
+                dynamicFieldsContainer.innerHTML = `
+                    <div class="form-group">
+                        <label for="post-event-name">Project / Event Name</label>
+                        <input type="text" id="post-event-name" placeholder="e.g., 'Hackathon 2025'" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="post-role-needed">Role Needed</label>
+                        <input type="text" id="post-role-needed" placeholder="e.g., 'Frontend Developer'" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="post-contact">Contact Info</label>
+                        <input type="text" id="post-contact" placeholder="e.g., 'user@college.edu'" required>
+                    </div>
+                `;
+                break;
+            case 'events':
+                fileUploadGroup.style.display = 'block';
+                dynamicFieldsContainer.innerHTML = `
+                    <div class="form-group">
+                        <label for="post-date">Date & Time</label>
+                        <input type="datetime-local" id="post-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="post-venue">Venue</label>
+                        <input type="text" id="post-venue" placeholder="e.g., 'Main Auditorium'" required>
+                    </div>
+                `;
+                break;
+            case 'recommendations':
+                fileUploadGroup.style.display = 'block';
+                dynamicFieldsContainer.innerHTML = `
+                    <div class="form-group">
+                        <label for="post-rec-category">Recommendation Category</label>
+                        <input type="text" id="post-rec-category" placeholder="e.g., 'Book', 'Cafe', 'Study Spot'" required>
+                    </div>
+                `;
+                break;
+            case 'questions':
+                // No extra fields needed
+                break;
+        }
+    });
+
+    // Form Submission
+    createPostForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!supabase || !currentUser) return;
+
+        publishPostBtn.disabled = true;
+        publishPostBtn.textContent = 'Publishing...';
+        
+        const category = categorySelect.value;
+        const title = document.getElementById('post-title').value;
+        const description = document.getElementById('post-description').value;
+        const imageFile = postImageUpload.files[0];
+        
+        let tableName = '';
+        let postObject = {};
+        let bucketName = '';
+        
+        try {
+            // 1. Upload image if it exists
+            let imageUrl = null;
+            let imagePath = null;
             
-            function createEventPostCard(data, post) {
-                const eventDate = new Date(post.date);
-                const detailsHtml = `
-                    <div class="post-details-grid">
-                        <div class="detail-item">
-                            <i class="fas fa-calendar-day"></i>
-                            <span>${eventDate.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-clock"></i>
-                            <span>${eventDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>${post.venue || 'TBD'}</span>
-                        </div>
-                    </div>`;
-                return createBaseCard(data, detailsHtml);
-            }
-
-            function createLostFoundPostCard(data, post) {
-                 const detailsHtml = `
-                    <div class="post-details-grid">
-                        <div class="detail-item">
-                            <i class="fas fa-search-location"></i>
-                            <span>Location: ${post.location || 'N/A'}</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-exclamation-circle"></i>
-                            <span>Status: <span style="text-transform: capitalize; font-weight: 600;">${post.status || 'N/A'}</span></span>
-                        </div>
-                    </div>`;
-                return createBaseCard(data, detailsHtml);
-            }
-            
-            function createTeamUpPostCard(data, post) {
-                const detailsHtml = `
-                    <div class="post-details-grid">
-                        <div class="detail-item">
-                            <i class="fas fa-trophy"></i>
-                            <span>Event: ${post.event_name || 'N/A'}</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-user-plus"></i>
-                            <span>Role Needed: ${post.role_needed || 'N/A'}</span>
-                        </div>
-                    </div>`;
-                return createBaseCard(data, detailsHtml);
-            }
-            
-            function createQuestionPostCard(data, post) {
-                return createBaseCard(data, '');
-            }
-            
-            function createRecommendationPostCard(data, post) {
-                const detailsHtml = `
-                    <div class="post-details-grid">
-                        <div class="detail-item" style="grid-column: 1 / -1;">
-                            <i class="fas fa-tag"></i>
-                            <span>Category: <span style="text-transform: capitalize; font-weight: 600;">${post.category || 'General'}</span></span>
-                        </div>
-                    </div>`;
-                return createBaseCard(data, detailsHtml);
-            }
-
-
-            // === 3. MAIN DATA LOADING FUNCTION ===
-            const postFeed = document.getElementById('post-feed');
-            
-            async function loadPosts() {
-                const loadingIndicator = document.getElementById('feed-loading');
-                postFeed.innerHTML = '<h2>Campus Feed</h2><p id="feed-loading">Loading Campus Feed...</p>';
-
-                let allPosts = [];
-                let error = null;
-
-                if (USE_MOCK_DATA || !supabase) {
-                    allPosts = MOCK_DATA.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-                } else {
-                    try {
-                        const { data: events, error: eventsError } = await supabase
-                            .from('events').select(`*, user:users ( user_name, user_avatar )`).order('created_at', { ascending: false }).limit(10);
-                        if (eventsError) throw eventsError;
-                        allPosts.push(...events.map(p => ({ ...p, post_type: 'events' })));
-
-                        const { data: lostFound, error: lfError } = await supabase
-                            .from('lost_found').select(`*, user:users ( user_name, user_avatar )`).order('created_at', { ascending: false }).limit(10);
-                        if (lfError) throw lfError;
-                        allPosts.push(...lostFound.map(p => ({ ...p, post_type: 'lost_found' })));
-
-                        const { data: teamUp, error: tuError } = await supabase
-                            .from('team_up').select(`*, user:users ( user_name, user_avatar )`).order('created_at', { ascending: false }).limit(10);
-                        if (tuError) throw tuError;
-                        allPosts.push(...teamUp.map(p => ({ ...p, post_type: 'team_up' })));
-                        
-                        const { data: questions, error: qError } = await supabase
-                            .from('questions').select(`*, user:users ( user_name, user_avatar )`).order('created_at', { ascending: false }).limit(10);
-                        if (qError) throw qError;
-                        allPosts.push(...questions.map(p => ({ ...p, post_type: 'questions' })));
-                        
-                        const { data: recs, error: recError } = await supabase
-                            .from('recommendations').select(`*, user:users ( user_name, user_avatar )`).order('created_at', { ascending: false }).limit(10);
-                        if (recError) throw recError;
-                        allPosts.push(...recs.map(p => ({ ...p, post_type: 'recommendations' })));
-
-                        allPosts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-                    } catch (dbError) {
-                        console.error('Error fetching from Supabase:', dbError);
-                        error = dbError;
-                    }
-                }
-
-                // === 4. RENDER POSTS TO THE PAGE ===
-                const currentLoading = document.getElementById('feed-loading');
-                if (currentLoading) {
-                    currentLoading.style.display = 'none';
-                }
-
-                if (error) {
-                    postFeed.innerHTML += '<p style="color: red;">Could not load feed. Check console for errors.</p>';
-                    return;
+            if (imageFile) {
+                // Determine bucket based on category
+                switch(category) {
+                    case 'lost-found': bucketName = 'lost-and-found-images'; break;
+                    case 'events': bucketName = 'event-posters'; break;
+                    case 'recommendations': bucketName = 'recommendation-images'; break;
                 }
                 
-                if (allPosts.length === 0) {
-                     postFeed.innerHTML += '<p>No posts yet. Be the first!</p>';
-                     return;
-                }
-
-                let postHtml = '';
-                allPosts.forEach((post, index) => {
-                    post.delay = index * 0.1;
-                    postHtml += createPostCard(post);
-                });
-                postFeed.innerHTML += postHtml;
-            }
-
-            loadPosts();
-
-
-            // === 5. MODAL AND FORM LOGIC ===
-            const createPostBtn = document.getElementById('create-post-btn');
-            const modalOverlay = document.getElementById('create-post-modal');
-            const modalCloseBtn = document.getElementById('modal-close-btn');
-            const postForm = document.querySelector('.modal-form');
-            const publishPostBtn = document.getElementById('publish-post-btn');
-
-            const openModal = () => modalOverlay && modalOverlay.classList.add('active');
-            const closeModal = () => modalOverlay && modalOverlay.classList.remove('active');
-
-            if (createPostBtn) createPostBtn.addEventListener('click', openModal);
-            if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
-            if (modalOverlay) modalOverlay.addEventListener('click', (event) => {
-                if (event.target === modalOverlay) closeModal();
-            });
-
-            const postImageInput = document.getElementById('post-image-input');
-            const fileNameDisplay = document.getElementById('file-name-display');
-
-            if (postImageInput && fileNameDisplay) {
-                postImageInput.addEventListener('change', () => {
-                    fileNameDisplay.textContent = postImageInput.files.length > 0
-                        ? postImageInput.files[0].name
-                        : 'No file chosen';
-                });
-            }
-            
-            const categorySelect = document.getElementById('post-category');
-            const lfStatusGroup = document.getElementById('lf-status-group');
-            
-            if(categorySelect && lfStatusGroup) {
-                categorySelect.addEventListener('change', (e) => {
-                    lfStatusGroup.style.display = e.target.value === 'lost-found' ? 'block' : 'none';
-                });
-            }
-
-            async function handlePostSubmit(event) {
-                event.preventDefault(); 
-                if (USE_MOCK_DATA || !supabase) {
-                    console.log('Mock Mode: Form submitted.');
-                    alert('Mock Post Created! (Check console for data)');
-                    closeModal();
-                    postForm.reset();
-                    fileNameDisplay.textContent = 'No file chosen';
-                    lfStatusGroup.style.display = 'none';
-                    return;
-                }
-
-                publishPostBtn.disabled = true;
-                publishPostBtn.textContent = 'Publishing...';
-
-                const title = document.getElementById('post-title').value;
-                const category = document.getElementById('post-category').value;
-                const description = document.getElementById('post-description').value;
-                const imageFile = postImageInput.files[0];
-                
-                // TODO: Replace with real user ID from Supabase Auth
-                const user_id = 'YOUR_LOGGED_IN_USER_ID'; 
-                
-                let imageUrl = null;
-
-                try {
-                    if (imageFile) {
-                        const filePath = `public/${user_id}/${Date.now()}-${imageFile.name}`;
-                        const { data: uploadData, error: uploadError } = await supabase
-                            .storage.from('post-images').upload(filePath, imageFile);
-                        if (uploadError) throw uploadError;
-                        const { data: urlData } = supabase.storage.from('post-images').getPublicUrl(filePath);
-                        imageUrl = urlData.publicUrl;
-                    }
-
-                    let tableName = '';
-                    let postObject = {};
-
-                    switch (category) {
-                        case 'lost-found':
-                            tableName = 'lost_found';
-                            postObject = { user_id, title, description, image_url: imageUrl, location: 'TODO', status: document.getElementById('lf-status').value };
-                            break;
-                        case 'events':
-                            tableName = 'events';
-                            postObject = { posted_by: user_id, title, description, image_url: imageUrl, date: '2025-11-10T10:00:00', venue: 'TODO', dept_id: '1' };
-                            break;
-                        case 'team-up':
-                             tableName = 'team_up';
-                             postObject = { user_id, title, description, image_url: imageUrl, event_name: 'TODO', role_needed: 'TODO' };
-                             break;
-                        case 'qa':
-                            tableName = 'questions';
-                            postObject = { user_id, title, content: description, image_url: imageUrl };
-                            break;
-                        case 'recommendations':
-                            tableName = 'recommendations';
-                            postObject = { user_id, title, description, image_url: imageUrl, category: 'TODO' };
-                            break;
-                    }
+                if (bucketName) {
+                    imagePath = `public/${currentUser.id}/${Date.now()}-${imageFile.name}`;
+                    const { data: uploadData, error: uploadError } = await supabase
+                        .storage.from(bucketName).upload(imagePath, imageFile);
+                    if (uploadError) throw uploadError;
                     
-                    if (!tableName) throw new Error('Invalid category selected.');
-
-                    const { error: insertError } = await supabase.from(tableName).insert([postObject]);
-                    if (insertError) throw insertError;
-
-                    alert('Post created successfully!');
-                    closeModal();
-                    postForm.reset();
-                    fileNameDisplay.textContent = 'No file chosen';
-                    lfStatusGroup.style.display = 'none';
-                    loadPosts(); 
-
-                } catch (error) {
-                    console.error('Error creating post:', error.message);
-                    alert('Error creating post: ' + error.message);
-                } finally {
-                    publishPostBtn.disabled = false;
-                    publishPostBtn.textContent = 'Publish Post';
+                    const { data: urlData } = supabase.storage.from(bucketName).getPublicUrl(imagePath);
+                    imageUrl = urlData.publicUrl;
                 }
             }
-            
-            if (postForm) {
-                postForm.addEventListener('submit', handlePostSubmit);
+
+            // 2. Prepare post object based on category
+            switch(category) {
+                case 'lost-found':
+                    tableName = 'lost_found';
+                    postObject = {
+                        user_id: currentUser.id,
+                        title: title,
+                        description: description,
+                        location: document.getElementById('post-location').value,
+                        status: document.getElementById('post-status').value,
+                        image_url: imageUrl,
+                        image_path: imagePath
+                    };
+                    break;
+                case 'team-up':
+                    tableName = 'team_up';
+                    postObject = {
+                        user_id: currentUser.id,
+                        event_name: document.getElementById('post-event-name').value, // Maps to 'title' in form
+                        role_needed: document.getElementById('post-role-needed').value,
+                        description: description,
+                        contact_info: document.getElementById('post-contact').value,
+                        // Note: 'title' from the form is used for event_name
+                    };
+                    break;
+                case 'events':
+                    tableName = 'events';
+                    postObject = {
+                        posted_by: currentUser.id, // schema has posted_by
+                        title: title,
+                        description: description,
+                        date: document.getElementById('post-date').value,
+                        venue: document.getElementById('post-venue').value,
+                        image_url: imageUrl,
+                        image_path: imagePath
+                    };
+                    break;
+                case 'questions':
+                    tableName = 'questions';
+                    postObject = {
+                        user_id: currentUser.id,
+                        title: title,
+                        content: description // schema has content
+                    };
+                    break;
+                case 'recommendations':
+                    tableName = 'recommendations';
+                    postObject = {
+                        user_id: currentUser.id,
+                        title: title,
+                        description: description,
+                        category: document.getElementById('post-rec-category').value,
+                        image_url: imageUrl,
+                        image_path: imagePath
+                    };
+                    break;
             }
 
-            // === 6. NEW: THEME TOGGLE LOGIC ===
-            const themeBtn = document.getElementById('themeToggle');
-            const body = document.body;
+            // 3. Insert into database
+            if (!tableName) throw new Error('Invalid category.');
             
-            // Check for saved theme
-            if (localStorage.getItem('theme') === 'dark') {
-                body.classList.add('dark');
-                if (themeBtn) themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
-            }
-            
-            if (themeBtn) {
-                themeBtn.onclick = () => {
-                    body.classList.toggle('dark');
-                    if (body.classList.contains('dark')) {
-                        themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
-                        localStorage.setItem('theme', 'dark');
-                    } else {
-                        themeBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
-                        localStorage.setItem('theme', 'light');
-                    }
-                };
-            }
+            const { data, error: insertError } = await supabase
+                .from(tableName)
+                .insert(postObject)
+                .single(); // Use single() to get the object back?
+                
+            if (insertError) throw insertError;
 
-        });
-    </script>
+            // 4. Success
+            modalOverlay.classList.remove('active');
+            createPostForm.reset();
+            fileNameDisplay.textContent = 'No file chosen';
+            dynamicFieldsContainer.innerHTML = '';
+            
+            // Reload the feed
+            postFeed.innerHTML = '<h2>Campus Feed</h2><p id="feed-loading">Loading Campus Feed...</p>';
+            loadAllPosts();
+
+        } catch (error) {
+            console.error('Error creating post:', error.message);
+            alert('Error creating post: ' + error.message);
+        } finally {
+            publishPostBtn.disabled = false;
+            publishPostBtn.textContent = 'Publish Post';
+        }
+    });
+
+    // === 11. INITIALIZE ===
+    checkAuth();
+});
+</script>
 </body>
 </html>
 
