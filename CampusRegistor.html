@@ -289,11 +289,11 @@ canvas#particles {
 <div class="bg-shape three"></div>
 
 <header>
-  <a href="index.html" class="brand"><i class="fa-solid fa-graduation-cap"></i> CampusHub</a>
+  <a href="campushub.html" class="brand"><i class="fa-solid fa-graduation-cap"></i> CampusHub</a>
   <nav>
     <!-- LINK FIXED: Points to dashboard -->
-    <a href="index.html">Home</a>
-    <a href="CampusLoginDynamic.html">Login</a>
+    <a href="campushub.html">Home</a>
+    <a href="index.html">Login</a>
     <a href="contact.html">Contact</a>
     <button id="themeToggle"><i class="fa-solid fa-moon"></i></button>
   </nav>
@@ -367,7 +367,7 @@ canvas#particles {
     <p id="message"></p>
 
     <div class="links">
-      Already have an account? <a href="CampusLoginDynamic.html">Login here</a>
+      Already have an account? <a href="index.html">Login here</a>
     </div>
   </section>
 </main>
@@ -383,7 +383,7 @@ canvas#particles {
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1dWNncWJ5ZWdlcm5keXZpZWZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1NTc1NTksImV4cCI6MjA3NzEzMzU1OX0.fImUoHr86_5MdkDEWu8JXhjSaG2oxbq0IoGhZ6XeH-0";
 
   let supabaseClient;
-  if (SUPABASE_URL !== "YOUR_SUPABASE_URL") {
+  if (SUPABASE_URL !== "https://tuucgqbyegerndyviefw.supabase.co") {
     supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   } else {
     console.warn("Supabase keys not provided. Registration form is disabled.");
@@ -512,3 +512,4 @@ drawParticles();
 </script>
 </body>
 </html>
+
