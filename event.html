@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CampusHub – Events</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+/* === NEW: Unified Design System === */
+:root {
+  --primary: #5E35B1;
+  --secondary: #7E57C2;
+  --primary-gradient: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+  --bg1: #f3e9fb;
+  --bg2: #ede7f6;
+  --card-bg: #ffffff;
+  --text-color: #333;
+  --text-light: #555;
+  --border-color: #e0e0e0;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+body.dark {
+  --bg1: #1b132d;
+  --bg2: #2a1f47;
+  --card-bg: #2a1f47;
+  --text-color: #f3e9fb;
+  --text-light: #d1c4e9;
+  --border-color: #4a3a6b;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(120deg, var(--bg1), var(--bg2));
+  color: var(--text-color);
+  transition: background 0.4s, color 0.4s;
+  padding-top: 70px; /* Space for header */
+}
+
+/* === NEW: Unified Header === */
+header {
+  height: 70px;
+  background: var(--primary-gradient);
+  color: #fff;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px;
+  box-shadow: 0 6px 20px rgba(94,53,177,0.25);
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+}
+.nav-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.nav-link {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 500;
+  padding: 10px;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+  opacity: 0.9;
+}
+.nav-link:hover, .nav-link.active {
+  opacity: 1;
+  border-bottom-color: #fff;
+}
+.nav-user-area {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+#themeToggle {
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: #fff;
+  background: none;
+  border: none;
+  transition: transform 0.3s;
+}
+#themeToggle:hover { transform: rotate(20deg); }
+.user-profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+#logout-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 10px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+#logout-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+.cta-button{
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 10px 18px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+.cta-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Floating Orbs */
+.orb {
+  position: fixed; border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.4;
+  z-index: -1;
+  pointer-events: none;
+}
+.orb-1 { width: 300px; height: 300px; left: 10%; top: 15%; background: var(--primary); animation: float1 8s ease-in-out infinite; }
+.orb-2 { width: 280px; height: 280px; right: 8%; bottom: 10%; background: var(--secondary); animation: float2 9s ease-in-out infinite; }
+@keyframes float1 { 0%,100%{transform:translateY(0)}50%{transform:translateY(25px)} }
+@keyframes float2 { 0%,100%{transform:translateY(0)}50%{transform:translateY(-25px)} }
+
+/* Main */
+main {
+  max-width: 1100px;
+  margin: 30px auto 60px;
+  padding: 16px;
+  z-index: 3;
+  text-align: center;
+}
+.hero {
+  text-align: center;
+  padding: 20px;
+}
+.hero h2 {
+  font-size: 36px;
+  color: var(--primary);
+  margin-bottom: 10px;
+}
+body.dark .hero h2 { color: var(--secondary); }
+.hero p {
+  color: var(--text-light);
+  font-size: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.add-event-btn {
+  background: var(--primary-gradient);
+  color: white;
+  padding: 14px 22px;
+  border: none; border-radius: 12px;
+  font-weight: 700; cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
+  font-size: 1rem;
+}
+.add-event-btn:hover { transform: translateY(-4px); }
+
+/* Event Grid */
+.events-grid {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(94,53,177,0.1);
+  overflow: hidden;
+  transition: 0.3s;
+  animation: fadeUp 1s ease;
+  position: relative;
+  text-align: left;
+}
+body.dark .card { box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+.card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(94,53,177,0.2);
+}
+@keyframes fadeUp {
+  from {opacity:0; transform:translateY(30px);}
+  to {opacity:1; transform:translateY(0);}
+}
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-bottom: 1px solid var(--border-color);
+}
+.card .content {
+  padding: 20px;
+}
+.card h3 {
+  color: var(--primary);
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+body.dark .card h3 { color: var(--secondary); }
+.card .description {
+  color: var(--text-light);
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+.card .meta {
+  font-size: 13px;
+  color: var(--text-light);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.card .register-btn {
+  display: inline-block;
+  padding: 10px 18px;
+  background: var(--primary-gradient);
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s;
+}
+.card .register-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(94, 53, 177, 0.3);
+}
+
+/* NEW: Delete Button */
+.delete-btn {
+  position: absolute;
+  top: 10px; right: 10px;
+  background: rgba(255,0,0,0.1);
+  color: #d9534f;
+  border: 1px solid #d9534f;
+  border-radius: 50%;
+  width: 32px; height: 32px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: none; /* Hide by default */
+  font-size: 0.9rem;
+  z-index: 5;
+}
+.delete-btn:hover { background: rgba(255,0,0,0.7); color: #fff; border-color: transparent; }
+
+/* Popup Form */
+.popup {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  visibility: hidden; opacity: 0;
+  transition: 0.3s;
+  z-index: 200;
+  padding: 20px;
+}
+.popup.active { visibility: visible; opacity: 1; }
+.popup-content {
+  background: var(--card-bg);
+  padding: 26px;
+  border-radius: 16px;
+  width: 100%; max-width: 420px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  text-align: left;
+  border: 1px solid var(--border-color);
+}
+.popup-content h2 { 
+    margin-top: 0;
+    margin-bottom: 16px; 
+    color: var(--primary); 
+}
+body.dark .popup-content h2 { color: var(--secondary); }
+.popup-content label {
+    font-size: 14px; margin-top: 12px; display:block;
+    color: var(--text-color); font-weight: 500;
+}
+.popup-content input, .popup-content textarea {
+  width: 100%; 
+  margin-top: 6px;
+  padding: 10px; margin-bottom: 12px;
+  border-radius: 8px; border: 1px solid var(--border-color); font-family: inherit;
+  background: var(--bg1);
+  color: var(--text-color);
+}
+.popup-content input:focus, .popup-content textarea:focus {
+    border-color: var(--primary);
+    background-color: var(--card-bg);
+    box-shadow: 0 0 10px rgba(94, 53, 177, 0.3);
+    outline: none;
+}
+.popup-content .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+.popup-content button {
+  border: none; padding: 10px 16px;
+  border-radius: 10px; cursor: pointer; font-weight: 600;
+  transition: 0.3s;
+  font-family: 'Poppins', sans-serif;
+}
+.popup-content .save { background: var(--primary-gradient); color: white; }
+.popup-content .cancel { background: var(--bg1); color: var(--text-light); border: 1px solid var(--border-color); }
+.popup-content .cancel:hover { background: var(--border-color); }
+
+/* NEW: File Upload Button */
+input[type="file"] { display: none; }
+.file-upload-label {
+    display: block; width: 100%; padding: 12px; border: 2px dashed var(--border-color);
+    border-radius: 8px; text-align: center; font-weight: 500; color: var(--text-light);
+    cursor: pointer; transition: all 0.3s ease;
+    margin-top: 6px;
+}
+.file-upload-label:hover {
+    border-color: var(--primary); background-color: var(--bg1); color: var(--primary);
+}
+#file-name-display { font-size: 0.85rem; color: var(--text-light); margin-top: 5px; }
+
+footer {
+  text-align: center;
+  padding: 40px;
+  font-size: 14px;
+  color: var(--text-light);
+}
+</style>
+</head>
+<body>
+
+<!-- === NEW: Unified Header === -->
+<header>
+  <a href="campushub.html" class="nav-logo">
+    <i class="fa-solid fa-graduation-cap"></i> CampusHub
+  </a>
+  <nav class="nav-menu" id="nav-menu-links">
+    <a href="campushub.html" class="nav-link">Home</a>
+    <a href="CampusLostdyanmic.html" class="nav-link">Lost & Found</a>
+    <a href="Teamup.html" class="nav-link">Team Up</a>
+    <a href="event.html" class="nav-link active">Events</a>
+    <a href="qa_with_answers_share_answer.html" class="nav-link">Q&A</a>
+    <a href="recommendations_supabase_fixed.html" class="nav-link">Recommendations</a>
+  </nav>
+  <div class="nav-user-area" id="nav-user-auth">
+    <button id="addEventBtn" class="cta-button"><i class="fa-solid fa-plus"></i> Add Event</button>
+    <button id="themeToggle"><i class="fa-solid fa-moon"></i></button>
+    <a href="CampusprofileDynamic.html">
+        <img src="https://placehold.co/40x40/FFFFFF/5E35B1?text=U" alt="User Profile" class="user-profile-pic" id="user-profile-pic-nav" title="My Profile">
+    </a>
+    <button id="logout-button" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
+  </div>
+</header>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<main>
+    <section class="hero">
+      <h2>Upcoming Campus Events 🎉</h2>
+      <p>Stay informed and participate in exciting college activities, seminars, and festivals.</p>
+    </section>
+ 
+    <section class="events-grid" id="eventsList">
+        <p id="loading-message">Loading events...</p>
+    </section>
+</main>
+
+
+<!-- Popup Form -->
+<div class="popup" id="popupForm">
+  <div class="popup-content">
+    <form id="eventForm">
+        <h2>Add New Event</h2>
+        <label for="eventName">Event Name</label>
+        <input type="text" id="eventName" placeholder="e.g. 'TechFest 2025'" required>
+        
+        <label for="eventDate">Date & Time</label>
+        <input type="datetime-local" id="eventDate">
+        
+        <label for="eventVenue">Venue</label>
+        <input type="text" id="eventVenue" placeholder="e.g. 'Main Auditorium'" required>
+        
+        <label for="eventDescription">Description</label>
+        <textarea id="eventDescription" rows="3" placeholder="Description"></textarea>
+        
+        <!-- NEW: File Upload -->
+        <label for="eventImageUpload" class="file-upload-label">
+            <i class="fas fa-upload"></i> Upload Event Poster
+        </label>
+        <input type="file" id="eventImageUpload" accept="image/*">
+        <span id="file-name-display">No file chosen</span>
+
+        <div class="form-actions">
+            <button type="button" class="cancel" id="cancelForm">Cancel</button>
+            <button type="submit" class="save" id="saveEvent">Add Event</button>
+        </div>
+    </form>
+  </div>
+</div>
+
+<footer>© 2025 CampusHub | Designed for Connected Campuses 💜</footer>
+
+<!-- Supabase -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // === 1. SUPABASE CLIENT INITIALIZATION ===
+    const SUPABASE_URL = 'https://tuucgqbyegerndyviefw.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1dWNncWJ5ZWdlcm5keXZpZWZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1NTc1NTksImV4cCI6MjA3NzEzMzU1OX0.fImUoHr86_5MdkDEWu8JXhjSaG2oxbq0IoGhZ6XeH-0';
+    
+    let supabase;
+    let currentUser = null;
+    
+    try {
+             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+    } catch (error) {
+        console.error('Error initializing Supabase:', error);
+    }
+    
+    // === 2. AUTHENTICATION CHECK ===
+    async function checkAuth() {
+        if (!supabase) return;
+        
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (session) {
+            currentUser = session.user;
+            loadProfilePic(currentUser);
+            loadEvents();
+        } else {
+            window.location.href = 'index.html';
+        }
+    }
+    
+    function loadProfilePic(user) {
+        const profilePic = document.getElementById('user-profile-pic-nav');
+        if (user.user_metadata && user.user_metadata.profile_image) {
+            profilePic.src = user.user_metadata.profile_image;
+        } else {
+            const initials = (user.user_metadata.fullname || user.email)[0].toUpperCase();
+            profilePic.src = `https://placehold.co/40x40/FFFFFF/5E35B1?text=${initials}`;
+        }
+        profilePic.title = user.user_metadata.fullname || user.email;
+    }
+    
+    const logoutButton = document.getElementById('logout-button');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', async () => {
+            if (!supabase) return;
+            await supabase.auth.signOut();
+            window.location.href = 'index.html';
+        });
+    }
+    
+    // === 3. THEME TOGGLE ===
+    const themeBtn = document.getElementById('themeToggle');
+    const body = document.body;
+    if (localStorage.getItem("theme") === "dark") {
+      body.classList.add("dark");
+      themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+    }
+    themeBtn.onclick = () => {
+      body.classList.toggle("dark");
+      const isDark = body.classList.contains("dark");
+      themeBtn.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+      localStorage.setItem("theme", isDark ? 'dark' : 'light');
+    };
+
+    // === 4. POPUP LOGIC ===
+    const popup = document.getElementById("popupForm");
+    const eventForm = document.getElementById("eventForm");
+    const eventImageUpload = document.getElementById("eventImageUpload");
+    const fileNameDisplay = document.getElementById("file-name-display");
+
+    document.getElementById("addEventBtn").onclick = () => popup.classList.add("active");
+    document.getElementById("cancelForm").onclick = () => {
+        popup.classList.remove("active");
+        eventForm.reset();
+        fileNameDisplay.textContent = 'No file chosen';
+    };
+    
+    eventImageUpload.addEventListener('change', () => {
+        fileNameDisplay.textContent = eventImageUpload.files.length > 0
+            ? eventImageUpload.files[0].name
+            : 'No file chosen';
+    });
+
+    // === 5. LOAD EVENTS ===
+    const eventsList = document.getElementById("eventsList");
+    const loadingMessage = document.getElementById("loading-message");
+
+    async function loadEvents() {
+        if (!supabase) return;
+        
+        loadingMessage.style.display = 'block';
+        eventsList.innerHTML = '';
+        
+        // Fetch events and join with users table
+        const { data, error } = await supabase
+            .from("events")
+            .select(`
+                *,
+                user:users ( user_name, user_avatar )
+            `)
+            .order("date", { ascending: true }); // Show upcoming events first
+
+        loadingMessage.style.display = 'none';
+
+        if (error) {
+             console.error('Error fetching events:', error);
+             eventsList.innerHTML = '<p style="color: red;">Could not load events.</p>';
+             return;
+        }
+        
+        if (data.length === 0) {
+             eventsList.innerHTML = '<p>No events scheduled yet. Check back soon!</p>';
+             return;
+        }
+      
+        data.forEach(event => {
+            eventsList.appendChild(createEventCard(event));
+        });
+    }
+    
+    function createEventCard(event) {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.dataset.id = event.event_id;
+        
+        const user = event.user || { user_name: 'Campus Admin' };
+        
+        // Format date
+        let eventDate = "Date: TBA";
+        if (event.date) {
+            try {
+                eventDate = new Date(event.date).toLocaleString(undefined, {
+                    dateStyle: 'medium',
+                    timeStyle: 'short'
+                });
+            } catch (e) {
+                eventDate = event.date; // fallback
+            }
+        }
+        
+        // Show delete button only if the post's user_id matches the logged-in user's id
+        // Based on your schema, it's `posted_by`
+        const showDeleteBtn = (currentUser && currentUser.id === event.posted_by) ? 'style="display: block;"' : '';
+        const placeholderImg = `https://placehold.co/600x360/5E35B1/FFFFFF?text=${event.title}`;
+
+        card.innerHTML = `
+          <button class="delete-btn" ${showDeleteBtn} title="Delete this event">
+              <i class="fa-solid fa-trash"></i>
+          </button>
+          <img src="${event.image_url || placeholderImg}" alt="${event.title}" onerror="this.src='${placeholderImg}'">
+          <div class="content">
+            <h3>${event.title}</h3>
+            <p class="description">${event.description || "No description provided."}</p>
+            <div class="meta"><i class="fa-solid fa-calendar-days"></i> ${eventDate}</div>
+            <div class="meta"><i class="fa-solid fa-map-marker-alt"></i> ${event.venue || "Venue: TBA"}</div>
+            <div class="meta" style="font-size: 0.8rem; margin-top: 5px;">
+                <i class="fa-solid fa-user-circle"></i> Posted by <strong>${user.user_name}</strong>
+            </div>
+            <a href="#" class="register-btn" style="margin-top: 15px;">Register Now</a>
+          </div>
+        `;
+        
+        // Add delete functionality
+        const deleteBtn = card.querySelector('.delete-btn');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                if (confirm('Are you sure you want to delete this event?')) {
+                    await deleteEvent(event.event_id);
+                }
+            });
+        }
+        
+        return card;
+    }
+
+    // === 6. ADD EVENT ===
+    eventForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!supabase || !currentUser) return;
+        
+        const name = document.getElementById("eventName").value.trim();
+        const date = document.getElementById("eventDate").value;
+        const venue = document.getElementById("eventVenue").value.trim();
+        const description = document.getElementById("eventDescription").value.trim();
+        const imageFile = eventImageUpload.files[0];
+
+        if (!name || !venue) return alert("Please enter event name and venue!");
+
+        const saveButton = document.getElementById('saveEvent');
+        saveButton.disabled = true;
+        saveButton.textContent = 'Adding...';
+        
+        try {
+            let imageUrl = null;
+            let imagePath = null;
+            
+            // 1. Upload image if it exists
+            if (imageFile) {
+                imagePath = `public/events/${currentUser.id}/${Date.now()}-${imageFile.name}`;
+                const { data: uploadData, error: uploadError } = await supabase
+                    .storage
+                    .from('event-posters') // Assumes 'event-posters' bucket
+                    .upload(imagePath, imageFile);
+                
+                if (uploadError) throw uploadError;
+                
+                const { data: urlData } = supabase.storage.from('event-posters').getPublicUrl(imagePath);
+                imageUrl = urlData.publicUrl;
+            }
+            
+            // 2. Get user's department ID from their profile (assuming it's stored)
+            // This is a placeholder, you might need to fetch this on login and store it
+            let userDeptId = null;
+            if (currentUser.user_metadata.dept_id) {
+                 userDeptId = currentUser.user_metadata.dept_id;
+            } else {
+                // Fallback: Fetch from `users` table
+                const { data: userData, error: userError } = await supabase
+                    .from('users')
+                    .select('department_id')
+                    .eq('user_id', currentUser.id)
+                    .single();
+                if (userData) userDeptId = userData.department_id;
+            }
+
+            // 3. Insert event
+            const { error: insertError } = await supabase
+                .from("events")
+                .insert([{ 
+                    title: name, 
+                    date: date || null, 
+                    venue: venue, 
+                    description: description, 
+                    image_url: imageUrl,
+                    image_path: imagePath,
+                    posted_by: currentUser.id,
+                    dept_id: userDeptId // From your schema
+                }]);
+            
+            if (insertError) throw insertError;
+            
+            popup.classList.remove("active");
+            eventForm.reset();
+            fileNameDisplay.textContent = 'No file chosen';
+            loadEvents(); // Refresh the list
+
+        } catch (error) {
+            console.error('Error adding event:', error.message);
+            alert('Error: ' + error.message);
+        } finally {
+            saveButton.disabled = false;
+            saveButton.textContent = 'Add Event';
+        }
+    });
+
+    // === 7. DELETE EVENT ===
+    async function deleteEvent(id) {
+        if (!supabase) return;
+        
+        try {
+            // Optional: Get image path to delete from storage
+            const { data: eventData, error: fetchError } = await supabase
+                .from('events')
+                .select('image_path')
+                .eq('event_id', id)
+                .single();
+            
+            if (fetchError) throw fetchError;
+            
+            // 1. Delete DB record
+            const { error: deleteError } = await supabase
+                .from("events")
+                .delete()
+                .eq("event_id", id);
+
+            if (deleteError) throw deleteError;
+
+            // 2. Delete image from storage
+            if (eventData && eventData.image_path) {
+                const { error: storageError } = await supabase
+                    .storage
+                    .from('event-posters')
+                    .remove([eventData.image_path]);
+                
+                if (storageError) console.warn('Could not delete image from storage:', storageError.message);
+            }
+
+            // 3. Remove from UI
+            const cardToRemove = document.querySelector(`.card[data-id='${id}']`);
+            if (cardToRemove) cardToRemove.remove();
+
+        } catch (error) {
+            console.error('Error deleting event:', error.message);
+            alert('Could not delete event.');
+        }
+    }
+
+    // === 8. INITIALIZE ===
+    checkAuth();
+});
+</script>
+</body>
+</html>

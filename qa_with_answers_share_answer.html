@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CampusHub – Q&A</title>
+  
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <style>
+    /* === NEW: Unified Design System === */
+    :root {
+      --primary: #5E35B1;
+      --secondary: #7E57C2;
+      --primary-gradient: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+      --bg1: #f3e9fb;
+      --bg2: #ede7f6;
+      --card-bg: #ffffff;
+      --text-color: #333;
+      --text-light: #555;
+      --border-color: #e0e0e0;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    body.dark {
+      --bg1: #1b132d;
+      --bg2: #2a1f47;
+      --card-bg: #2a1f47;
+      --text-color: #f3e9fb;
+      --text-light: #d1c4e9;
+      --border-color: #4a3a6b;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    body{
+        font-family: 'Poppins', sans-serif; /* NEW: Font */
+        background: linear-gradient(120deg, var(--bg1), var(--bg2)); /* NEW: Background */
+        color: var(--text-color);
+        margin:0;
+        padding-top:70px;
+        transition: background 0.4s, color 0.4s;
+    }
+    
+    /* === NEW: Unified Header === */
+    header {
+      height: 70px;
+      background: var(--primary-gradient);
+      color: #fff;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px;
+      box-shadow: 0 6px 20px rgba(94,53,177,0.25);
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .nav-link {
+      text-decoration: none;
+      color: #fff;
+      font-weight: 500;
+      padding: 10px;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+      border-radius: 4px;
+      opacity: 0.9;
+    }
+    .nav-link:hover, .nav-link.active {
+      opacity: 1;
+      border-bottom-color: #fff;
+    }
+    .nav-user-area {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    #themeToggle {
+      cursor: pointer;
+      font-size: 1.3rem;
+      color: #fff;
+      background: none;
+      border: none;
+      transition: transform 0.3s;
+    }
+    #themeToggle:hover { transform: rotate(20deg); }
+    .user-profile-pic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      object-fit: cover;
+      border: 2px solid rgba(255, 255, 255, 0.8);
+    }
+    #logout-button {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      padding: 10px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+    #logout-button:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+    .cta-button{
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        padding: 10px 18px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-family: 'Poppins', sans-serif;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+    .cta-button:hover {
+        background: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+    /* Main Content */
+    main{max-width:1000px;margin:25px auto;padding:0 20px;}
+    h2{font-weight:600;margin-bottom:20px; color: var(--text-color);}
+    
+    .question-card{
+        background:var(--card-bg);
+        border:1px solid var(--border-color);
+        border-radius:12px;
+        box-shadow:var(--shadow);
+        padding:20px;
+        margin-bottom:20px;
+        transition:transform .2s ease,box-shadow .2s ease;
+    }
+    .question-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover);}
+    
+    .question-header{display:flex;align-items:center;gap:10px;}
+    .question-header img{width:45px;height:45px;border-radius:50%;object-fit:cover;}
+    .question-header div span{display:block;color:var(--text-light);font-size:0.95rem;}
+    .question-header div strong { color: var(--text-color); }
+    
+    .answers{margin-top:15px;padding-left:20px;border-left:3px solid var(--primary-light);}
+    .answer{margin-bottom:10px; color: var(--text-light);}
+    .answer strong{color:var(--primary); font-weight: 600;}
+    body.dark .answer strong { color: var(--secondary); }
+    
+    .question-actions{display:flex;border-top:1px solid var(--border-color);margin-top:15px;}
+    .question-actions button{flex:1;border:none;background:none;padding:12px;cursor:pointer;font-weight:600;color:var(--text-light);display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s ease;}
+    .question-actions button:hover{background:var(--bg1);color:var(--primary);}
+    .upvoted{color:var(--primary)!important;}
+    
+    /* Toast */
+    .toast{position:absolute;background:linear-gradient(135deg,#7E57C2 0%,#5E35B1 100%);color:#fff;padding:8px 12px;border-radius:8px;font-size:0.9rem;opacity:0;transition:opacity .2s ease,transform .2s ease;pointer-events:none;z-index:3000;}
+    .toast.show{opacity:1;transform:translateY(-6px);}
+    
+    /* Modals */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:2000; backdrop-filter: blur(5px);}
+    .modal-overlay.active{opacity:1;pointer-events:all;}
+    .modal{
+        background:var(--card-bg);
+        border-radius:10px;
+        max-width:560px;
+        width:100%;
+        padding:20px;
+        box-shadow:var(--shadow-hover);
+        border: 1px solid var(--border-color);
+    }
+    .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+    .modal-header h3 { color: var(--primary); }
+    body.dark .modal-header h3 { color: var(--secondary); }
+    .modal-close{font-size:1.2rem;cursor:pointer;color:var(--text-light);}
+    
+    .form-group{margin-bottom:12px;}
+    .form-group label{font-weight:600;display:block;margin-bottom:6px; color: var(--text-color);}
+    .form-group input, .form-group textarea{
+        width:100%;
+        padding:10px;
+        border:1px solid var(--border-color);
+        border-radius:8px;
+        font-family:inherit;
+        background-color: var(--bg1);
+        color: var(--text-color);
+    }
+    .form-group input:focus, .form-group textarea:focus {
+        border-color: var(--primary);
+        background-color: var(--card-bg);
+        box-shadow: 0 0 10px rgba(94, 53, 177, 0.3);
+        outline: none;
+    }
+    /* Modal submit button */
+    .modal .cta-button {
+        background: var(--primary-gradient);
+        border: none;
+    }
+    
+    @media (max-width:600px){ .question-actions button{font-size:0.9rem;padding:10px;} }
+  </style>
+</head>
+<body>
+  <!-- === NEW: Unified Header === -->
+  <header>
+    <a href="campushub.html" class="nav-logo">
+      <i class="fa-solid fa-graduation-cap"></i> CampusHub
+    </a>
+    <nav class="nav-menu" id="nav-menu-links">
+      <a href="campushub.html" class="nav-link">Home</a>
+      <a href="CampusLostdyanmic.html" class="nav-link">Lost & Found</a>
+      <a href="Teamup.html" class="nav-link">Team Up</a>
+      <a href="event.html" class="nav-link">Events</a>
+      <a href="qa_with_answers_share_answer.html" class="nav-link active">Q&A</a>
+      <a href="recommendations_supabase_fixed.html" class="nav-link">Recommendations</a>
+    </nav>
+    <div class="nav-user-area" id="nav-user-auth">
+      <button id="ask-btn" class="cta-button"><i class="fas fa-question-circle"></i><span>Ask</span></button>
+      <button id="themeToggle"><i class="fa-solid fa-moon"></i></button>
+      <a href="CampusprofileDynamic.html">
+          <img src="https://placehold.co/40x40/FFFFFF/5E35B1?text=U" alt="User Profile" class="user-profile-pic" id="user-profile-pic-nav" title="My Profile">
+      </a>
+      <button id="logout-button" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
+    </div>
+  </header>
+
+  <main>
+    <h2>Interactive Q&A Forum</h2>
+    <div id="qa-feed">
+        <p id="loading-message">Loading questions...</p>
+    </div>
+  </main>
+
+  <div id="toast" class="toast" aria-hidden="true">Link copied!</div>
+
+  <div id="ask-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal">
+      <div class="modal-header"><h3>Ask a Question</h3><span id="ask-close" class="modal-close"><i class="fas fa-times"></i></span></div>
+      <form id="ask-form">
+          <div class="form-group"><label for="q-title">Title</label><input id="q-title" placeholder="e.g., Best place for biryani near campus?" required></div>
+          <div class="form-group"><label for="q-desc">Details</label><textarea id="q-desc" rows="4" placeholder="Add more context..." required></textarea></div>
+          <div style="text-align:right;"><button type="submit" id="submit-question" class="cta-button">Post Question</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="answer-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal">
+      <div class="modal-header"><h3>Post an Answer</h3><span id="answer-close" class="modal-close"><i class="fas fa-times"></i></span></div>
+      <form id="answer-form">
+          <div class="form-group"><label for="answer-text">Your Answer</label><textarea id="answer-text" rows="4" placeholder="Type your answer here..." required></textarea></div>
+          <div style="text-align:right;"><button type="submit" id="submit-answer" class="cta-button">Submit Answer</button></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // === 1. SUPABASE CLIENT INITIALIZATION ===
+        const SUPABASE_URL = 'https://tuucgqbyegerndyviefw.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1dWNncWJ5ZWdlcm5keXZpZWZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1NTc1NTksImV4cCI6MjA3NzEzMzU1OX0.fImUoHr86_5MdkDEWu8JXhjSaG2oxbq0IoGhZ6XeH-0';
+        
+        let supabase;
+        let currentUser = null;
+        let questionsStore = []; // Store for questions data
+        
+        try {
+                 supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+             
+        } catch (error) {
+            console.error('Error initializing Supabase:', error);
+        }
+
+        // === 2. AUTHENTICATION CHECK ===
+        async function checkAuth() {
+            if (!supabase) return;
+            
+            const { data: { session }, error } = await supabase.auth.getSession();
+            
+            if (session) {
+                currentUser = session.user;
+                loadProfilePic(currentUser);
+                loadQuestions();
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+        
+        function loadProfilePic(user) {
+            const profilePic = document.getElementById('user-profile-pic-nav');
+            if (user.user_metadata && user.user_metadata.profile_image) {
+                profilePic.src = user.user_metadata.profile_image;
+            } else {
+                const initials = (user.user_metadata.fullname || user.email)[0].toUpperCase();
+                profilePic.src = `https://placehold.co/40x40/FFFFFF/5E35B1?text=${initials}`;
+            }
+            profilePic.title = user.user_metadata.fullname || user.email;
+        }
+        
+        const logoutButton = document.getElementById('logout-button');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', async () => {
+                if (!supabase) return;
+                await supabase.auth.signOut();
+                window.location.href = 'index.html';
+            });
+        }
+        
+        // === 3. LOAD QUESTIONS & ANSWERS FROM SUPABASE ===
+        const qaFeed = document.getElementById('qa-feed');
+        const loadingMessage = document.getElementById('loading-message');
+
+        async function loadQuestions() {
+            if (!supabase) return;
+            
+            loadingMessage.style.display = 'block';
+            qaFeed.innerHTML = '';
+            
+            // 1. Fetch all questions, ordering by neweset
+            // Joining with 'users' table to get user info
+            const { data: questions, error: qError } = await supabase
+                .from('questions')
+                .select(`
+                    *,
+                    user:users ( user_name, user_avatar )
+                `)
+                .order('created_at', { ascending: false });
+
+            if (qError) {
+                console.error('Error fetching questions:', qError);
+                loadingMessage.textContent = 'Could not load questions.';
+                return;
+            }
+            
+            if (questions.length === 0) {
+                loadingMessage.textContent = 'No questions asked yet. Be the first!';
+                return;
+            }
+            
+            // 2. Fetch answers for *all* questions
+            // This is more efficient than 1 query per question
+            const questionIds = questions.map(q => q.q_id);
+            const { data: answers, error: aError } = await supabase
+                .from('answers')
+                .select(`
+                    *,
+                    user:users ( user_name, user_avatar )
+                `)
+                .in('q_id', questionIds)
+                .order('created_at', { ascending: true });
+
+            if (aError) {
+                console.error('Error fetching answers:', aError);
+                // Continue anyway, just won't show answers
+            }
+            
+            // 3. Map answers to their questions
+            questionsStore = questions.map(q => {
+                const qAnswers = answers ? answers.filter(a => a.q_id === q.q_id) : [];
+                return {
+                    ...q,
+                    answers: qAnswers,
+                    upvotes: q.likes || 0, // Assuming a 'likes' column
+                    upvoted: false // TODO: Need a separate 'upvotes' table to track this properly
+                };
+            });
+            
+            loadingMessage.style.display = 'none';
+            renderQuestions();
+        }
+
+        // === 4. RENDER QUESTIONS TO DOM ===
+        function renderQuestions() {
+          qaFeed.innerHTML = '';
+          questionsStore.forEach((q, index) => {
+            const user = q.user || { user_name: 'Anonymous', user_avatar: 'https://placehold.co/45x45/ccc/FFFFFF?text=?' };
+            
+            const answersHTML = q.answers.map(a => {
+                const answerUser = a.user || { user_name: 'Anonymous' };
+                return `<div class="answer"><strong>${answerUser.user_name}:</strong> ${a.answer_text}</div>`;
+            }).join('');
+            
+            qaFeed.innerHTML += `
+              <div class="question-card" data-index="${index}" data-qid="${q.q_id}">
+                <div class="question-header">
+                  <img src="${user.user_avatar || 'https://placehold.co/45x45/ccc/FFFFFF?text=?'}" alt="${user.user_name}">
+                  <div>
+                    <strong>${user.user_name}</strong>
+                    <span>${q.title}</span>
+                  </div>
+                </div>
+
+                <p style="margin-top:12px;color:var(--text-light)">${q.content}</p>
+
+                <div class="answers">${answersHTML || '<div class="answer" style="font-style: italic; color: var(--text-light);">No answers yet.</div>'}</div>
+
+                <div class="question-actions">
+                  <button class="upvote-btn ${q.upvoted ? 'upvoted' : ''}" data-index="${index}"><i class="fas fa-thumbs-up"></i> Upvote (${q.upvotes})</button>
+                  <button class="answer-btn" data-index="${index}"><i class="fas fa-reply"></i> Answer</button>
+                  <button class="share-btn" data-index="${index}"><i class="fas fa-share"></i> Share</button>
+                </div>
+              </div>
+            `;
+          });
+
+          // Re-attach handlers
+          document.querySelectorAll('.upvote-btn').forEach(btn => {
+            btn.addEventListener('click', () => toggleUpvote(Number(btn.dataset.index)));
+          });
+          document.querySelectorAll('.answer-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              currentAnswerIndex = Number(btn.dataset.index);
+              openAnswerModal();
+            });
+          });
+          document.querySelectorAll('.share-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              copyLinkNearButton(e.currentTarget, Number(btn.dataset.index));
+            });
+          });
+        }
+
+        // === 5. EVENT HANDLERS (MODALS, ACTIONS) ===
+
+        // Upvote toggle
+        async function toggleUpvote(i) {
+          if (!supabase) return;
+          const question = questionsStore[i];
+          
+          // Note: This is a simplified upvote.
+          // It doesn't prevent double-voting.
+          // A real implementation would use a separate 'question_votes' table.
+          const newLikes = question.upvotes + (question.upvoted ? -1 : 1);
+          questionsStore[i].upvoted = !questionsStore[i].upvoted;
+          questionsStore[i].upvotes = newLikes;
+
+          // Update UI immediately
+          renderQuestions();
+          
+          // Update database
+          const { error } = await supabase
+            .from('questions')
+            .update({ likes: newLikes })
+            .eq('q_id', question.q_id);
+            
+          if (error) {
+            console.error('Error upvoting:', error);
+            // Revert optimistic update on error
+            questionsStore[i].upvoted = !questionsStore[i].upvoted;
+            questionsStore[i].upvotes = question.upvotes - (question.upvoted ? -1 : 1);
+            renderQuestions();
+          }
+        }
+
+        // Share behavior
+        const toast = document.getElementById('toast');
+        function copyLinkNearButton(buttonEl, idx) {
+          const link = `${window.location.origin}/q-and-a.html?id=${questionsStore[idx].q_id}`;
+          
+          try {
+            navigator.clipboard.writeText(link);
+          } catch(e) {
+            // Fallback for insecure contexts or older browsers
+            const ta = document.createElement('textarea');
+            ta.value = link; document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); } catch(e2){}
+            ta.remove();
+          }
+          
+          const rect = buttonEl.getBoundingClientRect();
+          const scrollY = window.scrollY || window.pageYOffset;
+          toast.style.left = `${rect.left + rect.width/2 - toast.offsetWidth/2}px`;
+          toast.style.top = `${rect.top + scrollY - 42}px`;
+          toast.classList.add('show');
+          toast.setAttribute('aria-hidden', 'false');
+          setTimeout(() => {
+            toast.classList.remove('show');
+            toast.setAttribute('aria-hidden', 'true');
+          }, 2000);
+        }
+
+        // Modals open/close
+        const askBtn = document.getElementById('ask-btn');
+        const askModal = document.getElementById('ask-modal');
+        const askClose = document.getElementById('ask-close');
+        const answerModal = document.getElementById('answer-modal');
+        const answerClose = document.getElementById('answer-close');
+        let currentAnswerIndex = null;
+
+        function openAskModal(){ askModal.classList.add('active'); askModal.setAttribute('aria-hidden','false'); }
+        function closeAskModal(){ askModal.classList.remove('active'); askModal.setAttribute('aria-hidden','true'); }
+        function openAnswerModal(){ answerModal.classList.add('active'); answerModal.setAttribute('aria-hidden','false'); answerText.focus(); }
+        function closeAnswerModal(){ answerModal.classList.remove('active'); answerModal.setAttribute('aria-hidden','true'); currentAnswerIndex = null; answerText.value = ''; }
+
+        askBtn.addEventListener('click', openAskModal);
+        askClose.addEventListener('click', closeAskModal);
+        askModal.addEventListener('click', (e)=>{ if(e.target===askModal) closeAskModal(); });
+        answerClose.addEventListener('click', closeAnswerModal);
+        answerModal.addEventListener('click', (e)=>{ if(e.target===answerModal) closeAnswerModal(); });
+
+        // Submit new question
+        const askForm = document.getElementById('ask-form');
+        const submitQuestionBtn = document.getElementById('submit-question');
+        
+        askForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!supabase || !currentUser) return;
+            
+            const title = document.getElementById('q-title').value.trim();
+            const content = document.getElementById('q-desc').value.trim();
+            
+            if(!title || !content) return alert('Please fill all fields.');
+            
+            submitQuestionBtn.disabled = true;
+            submitQuestionBtn.textContent = 'Posting...';
+
+            const { data, error } = await supabase
+                .from('questions')
+                .insert({
+                    user_id: currentUser.id,
+                    title: title,
+                    content: content,
+                    likes: 0 // Default likes to 0
+                })
+                .select(`
+                    *,
+                    user:users ( user_name, user_avatar )
+                `)
+                .single();
+
+            if (error) {
+                console.error('Error posting question:', error);
+                alert('Could not post question.');
+            } else {
+                // Add new question to start of list and re-render
+                questionsStore.unshift({
+                    ...data,
+                    answers: [],
+                    upvotes: data.likes || 0,
+                    upvoted: false
+                });
+                renderQuestions();
+                closeAskModal();
+                askForm.reset();
+            }
+            
+            submitQuestionBtn.disabled = false;
+            submitQuestionBtn.textContent = 'Post Question';
+        });
+
+        // Submit answer to specific question
+        const answerForm = document.getElementById('answer-form');
+        const submitAnswerBtn = document.getElementById('submit-answer');
+        const answerText = document.getElementById('answer-text');
+
+        answerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = answerText.value.trim();
+            if (!text) return alert('Please enter an answer.');
+            if (currentAnswerIndex === null) return alert('No question selected.');
+            if (!supabase || !currentUser) return;
+            
+            const question = questionsStore[currentAnswerIndex];
+            
+            submitAnswerBtn.disabled = true;
+            submitAnswerBtn.textContent = 'Submitting...';
+            
+            const { data, error } = await supabase
+                .from('answers')
+                .insert({
+                    user_id: currentUser.id,
+                    q_id: question.q_id,
+                    answer_text: text
+                })
+                .select(`
+                    *,
+                    user:users ( user_name, user_avatar )
+                `)
+                .single();
+            
+            if (error) {
+                console.error('Error posting answer:', error);
+                alert('Could not post answer.');
+            } else {
+                // Add new answer and re-render
+                questionsStore[currentAnswerIndex].answers.push(data);
+                renderQuestions();
+                closeAnswerModal();
+            }
+
+            submitAnswerBtn.disabled = false;
+            submitAnswerBtn.textContent = 'Submit Answer';
+        });
+
+        // === 6. THEME TOGGLE LOGIC ===
+        const themeBtn = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark');
+            if (themeBtn) themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+        }
+        
+        if (themeBtn) {
+            themeBtn.onclick = () => {
+                body.classList.toggle('dark');
+                const isDark = body.classList.contains('dark');
+                themeBtn.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            };
+        }
+        
+        // === 7. INITIALIZE ===
+        checkAuth();
+    });
+  </script>
+</body>
+</html>

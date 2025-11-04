@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CampusHub — Recommendations</title>
+  
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <style>
+    /* === Unified Design System === */
+    :root {
+      --primary: #5E35B1;
+      --secondary: #7E57C2;
+      --primary-gradient: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+      --bg1: #f3e9fb;
+      --bg2: #ede7f6;
+      --card-bg: #ffffff;
+      --text-color: #333;
+      --text-light: #555;
+      --border-color: #e0e0e0;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.1);
+      --accent: #FFC107; /* For ratings */
+    }
+
+    body.dark {
+      --bg1: #1b132d;
+      --bg2: #2a1f47;
+      --card-bg: #2a1f47;
+      --text-color: #f3e9fb;
+      --text-light: #d1c4e9;
+      --border-color: #4a3a6b;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    *{box-sizing:border-box}
+    
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(120deg, var(--bg1), var(--bg2));
+        color: var(--text-color);
+        margin:0;
+        padding-top:70px;
+        transition: background 0.4s, color 0.4s;
+    }
+    
+    /* === Unified Header === */
+    header {
+      height: 70px;
+      background: var(--primary-gradient);
+      color: #fff;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px;
+      box-shadow: 0 6px 20px rgba(94,53,177,0.25);
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .nav-link {
+      text-decoration: none;
+      color: #fff;
+      font-weight: 500;
+      padding: 10px;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+      border-radius: 4px;
+      opacity: 0.9;
+    }
+    .nav-link:hover, .nav-link.active {
+      opacity: 1;
+      border-bottom-color: #fff;
+    }
+    .nav-user-area {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    #themeToggle {
+      cursor: pointer;
+      font-size: 1.3rem;
+      color: #fff;
+      background: none;
+      border: none;
+      transition: transform 0.3s;
+    }
+    #themeToggle:hover { transform: rotate(20deg); }
+    .user-profile-pic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      object-fit: cover;
+      border: 2px solid rgba(255, 255, 255, 0.8);
+    }
+    #logout-button {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      padding: 10px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+    #logout-button:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+    .cta-button{
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        padding: 10px 18px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-family: 'Poppins', sans-serif;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+    .cta-button:hover {
+        background: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+    
+    /* === ADDED: Background Orbs & Particles === */
+    @keyframes float {
+      from {transform: translateY(0) rotate(0);}
+      to {transform: translateY(-40px) rotate(360deg);}
+    }
+    .bg-shape {
+      position: fixed;
+      border-radius: 50%; 
+      opacity: 0.3; 
+      filter: blur(50px);
+      animation: float 10s ease-in-out infinite alternate;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .bg-shape.one { background: var(--primary); width: 200px; height: 200px; top: 20%; left: 5%; animation-delay: 0s; }
+    .bg-shape.two { background: var(--secondary); width: 260px; height: 260px; bottom: 10%; right: 10%; animation-delay: 2s; }
+    .bg-shape.three { background: #c084fc; width: 180px; height: 180px; top: 60%; left: 40%; animation-delay: 4s; }
+
+    canvas#particles {
+      position: fixed; top: 0; left: 0; 
+      z-index: 0;
+      width: 100%; height: 100%; 
+      pointer-events: none;
+    }
+    
+    /* Main Content */
+    main{
+        max-width:1200px;
+        margin:28px auto;
+        padding:0 20px;
+        display:grid;
+        grid-template-columns:1fr 320px;
+        gap:24px;
+        position: relative; /* ADDED: This makes z-index work */
+        z-index: 5; /* ADDED: This puts content on top of orbs */
+    }
+    h1{font-size:1.4rem;margin:0 0 12px;font-weight:700; color: var(--text-color);}
+    
+    .panel{background:var(--card-bg);border:1px solid var(--border-color);border-radius:12px;padding:18px;box-shadow:var(--shadow)}
+    
+    .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    .filter-btn{
+        background:var(--bg1); 
+        border:1px solid var(--border-color); 
+        padding:8px 12px; border-radius:10px; cursor:pointer; 
+        font-weight:600; color:var(--text-light);
+        font-family: 'Poppins', sans-serif;
+    }
+    .filter-btn.active{background:var(--primary-gradient);color:#fff;border-color:transparent}
+    
+    .search-row{display:flex;gap:10px;margin-bottom:14px}
+    .search-row input, .search-row select {
+        flex:1; padding:10px; border:1px solid var(--border-color); 
+        border-radius:10px; background: var(--bg1); color: var(--text-color);
+        font-family: 'Poppins', sans-serif;
+    }
+    .search-row input:focus, .search-row select:focus {
+        border-color: var(--primary); background-color: var(--card-bg);
+        box-shadow: 0 0 10px rgba(94, 53, 177, 0.3); outline: none;
+    }
+
+    .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    .rec-card{background:var(--card-bg);border:1px solid var(--border-color);border-radius:10px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,0.04);transition:transform .18s ease,box-shadow .18s ease}
+    .rec-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-hover)}
+    
+    .rec-media{height:140px;overflow:hidden; border-bottom: 1px solid var(--border-color);}
+    .rec-media img{width:100%;height:100%;object-fit:cover;display:block}
+    
+    .rec-body{padding:12px}
+    .rec-title{font-weight:700;margin:0 0 6px;font-size:1rem; color: var(--text-color);}
+    .rec-desc{color:var(--text-light);font-size:0.92rem;margin:0 0 8px}
+    
+    .rec-meta{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .rating{display:inline-flex;align-items:center;gap:6px;font-weight:700;color:var(--primary)}
+    body.dark .rating { color: var(--secondary); }
+    
+    .category-pill{background:var(--bg1); border: 1px solid var(--border-color); padding:6px 8px;border-radius:8px;font-weight:600;font-size:0.82rem;color:var(--text-light)}
+    
+    .card-actions{display:flex;gap:8px;margin-top:10px}
+    .icon-btn{
+        border:none;background:var(--bg1);border:1px solid var(--border-color);
+        padding:8px 10px;border-radius:8px;cursor:pointer;
+        font-weight:600;color:var(--text-light);
+        font-family: 'Poppins', sans-serif;
+    }
+    .icon-btn.upvoted, .icon-btn:hover{
+        background:var(--primary-gradient);
+        color:#fff;border-color:transparent
+    }
+    
+    .stars{display:inline-flex;gap:6px}
+    .stars button{background:none;border:none;font-size:1.05rem;color:var(--border-color);cursor:pointer;padding:4px;border-radius:4px}
+    .stars button.filled{color:var(--accent);text-shadow:0 1px 0 rgba(0,0,0,0.06)}
+    
+    .sidebar-section h4{margin:0 0 10px;color:var(--primary);display:flex;align-items:center;gap:8px}
+    body.dark .sidebar-section h4 { color: var(--secondary); }
+    
+    .fav-list{display:flex;flex-direction:column;gap:10px}
+    .fav-item{display:flex;gap:10px;align-items:center}
+    .fav-item img{width:48px;height:48px;border-radius:8px;object-fit:cover}
+    .fav-item strong { color: var(--text-color); }
+    
+    /* Modals */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .18s ease;z-index:3000; backdrop-filter: blur(5px);}
+    .modal-overlay.active{opacity:1;pointer-events:all}
+    .modal{
+        background:var(--card-bg);
+        border-radius:10px;
+        max-width:720px;
+        width:100%;
+        padding:18px;
+        box-shadow:var(--shadow-hover);
+        border: 1px solid var(--border-color);
+    }
+    .modal .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .modal .modal-header strong { font-size: 1.2rem; color: var(--primary); }
+    body.dark .modal .modal-header strong { color: var(--secondary); }
+    .close-btn{background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--muted)}
+    
+    /* Form elements in modal */
+    .form-group{margin-bottom:12px;}
+    .form-group label{font-weight:600;display:block;margin-bottom:6px; color: var(--text-color);}
+    .form-group input, .form-group select, .form-group textarea{
+        width:100%; padding:10px; border:1px solid var(--border-color);
+        border-radius:8px; font-family:inherit;
+        background-color: var(--bg1); color: var(--text-color);
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+        border-color: var(--primary); background-color: var(--card-bg);
+        box-shadow: 0 0 10px rgba(94, 53, 177, 0.3); outline: none;
+    }
+    .modal .cta-button {
+        background: var(--primary-gradient);
+        border: none;
+    }
+    
+    /* File Upload Button */
+    input[type="file"] { display: none; }
+    .file-upload-label {
+        display: block; width: 100%; padding: 12px; border: 2px dashed var(--border-color);
+        border-radius: 8px; text-align: center; font-weight: 500; color: var(--text-light);
+        cursor: pointer; transition: all 0.3s ease;
+        margin-top: 6px;
+    }
+    .file-upload-label:hover {
+        border-color: var(--primary); background-color: var(--bg1); color: var(--primary);
+    }
+    #file-name-display { font-size: 0.85rem; color: var(--text-light); margin-top: 5px; }
+
+    @media (max-width:980px){
+        main{grid-template-columns:1fr; padding:16px} 
+        .cards{grid-template-columns:1fr} 
+        .sidebar-section { margin-top: 20px; }
+    }
+    .note{font-size:0.9rem;color:var(--muted);margin-top:8px}
+  </style>
+</head>
+<body>
+  <!-- ADDED: Background Orbs & Particles -->
+  <canvas id="particles"></canvas>
+  <div class="bg-shape one"></div>
+  <div class="bg-shape two"></div>
+  <div class="bg-shape three"></div>
+
+  <!-- Header with FIXED links -->
+  <header>
+    <a href="campushub.html" class="nav-logo">
+      <i class="fa-solid fa-graduation-cap"></i> CampusHub
+    </a>
+    <nav class="nav-menu" id="nav-menu-links">
+      <a href="campushub.html" class="nav-link">Home</a>
+      <a href="CampusLostdyanmic.html" class="nav-link">Lost & Found</a>
+      <a href="Teamup.html" class="nav-link">Team Up</a>
+      <a href="event.html" class="nav-link">Events</a>
+      <a href="qa_with_answers_share_answer.html" class="nav-link">Q&A</a>
+      <a href="recommendations_supabase_fixed.html" class="nav-link active">Recommendations</a>
+      <a href="contact.html" class="nav-link">Contact</a>
+    </nav>
+    <div class="nav-user-area" id="nav-user-auth">
+      <button id="add-rec" class="cta-button"><i class="fas fa-plus"></i>&nbsp;Recommend</button>
+      <button id="themeToggle"><i class="fa-solid fa-moon"></i></button>
+      <a href="CampusprofileDynamic.html">
+          <img src="https://placehold.co/40x40/FFFFFF/5E35B1?text=U" alt="User Profile" class="user-profile-pic" id="user-profile-pic-nav" title="My Profile">
+      </a>
+      <button id="logout-button" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <div class="panel">
+        <h1>Recommendations for You</h1>
+        <div class="filters" role="tablist" aria-label="Filter recommendations">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="food">Food</button>
+          <button class="filter-btn" data-filter="study">Study</button>
+          <button class="filter-btn" data-filter="tech">Tech</button>
+          <button class="filter-btn" data-filter="other">Other</button>
+        </div>
+
+        <div class="search-row">
+          <input id="search" placeholder="Search recommendations (e.g., biryani, laptop, notes)..." />
+          <select id="sort" style="padding:10px;border-radius:8px;border:1px solid var(--border-color)">
+            <option value="popular">Most Popular</option>
+            <option value="rating">Top Rated</option>
+            <option value="new">Newest</option>
+          </select>
+        </div>
+
+        <div class="cards" id="cards">
+            <p id="loading-message">Loading recommendations...</p>
+        </div>
+        <div class="note">Tip: Click the stars on a card to rate it. Your rating is saved automatically.</div>
+      </div>
+    </section>
+
+    <aside>
+      <div class="panel sidebar-section">
+        <h4><i class="fas fa-heart"></i> My Saved Picks</h4>
+        <div class="fav-list" id="fav-list">
+            <p id="fav-loading" style="color: var(--text-light); font-size: 0.9rem;">Loading...</p>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <div id="detail-modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header"><strong id="modal-title">Title</strong><button class="close-btn" id="modal-close"><i class="fas fa-times"></i></button></div>
+      <div style="display:flex;gap:14px">
+        <div style="flex:1">
+          <img id="modal-img" src="https://placehold.co/600x360/5E35B1/FFFFFF?text=Image" style="width:100%;border-radius:8px;margin-bottom:12px;object-fit:cover" alt="">
+          <p id="modal-desc" style="color:var(--text-light)"></p>
+        </div>
+        <div style="width:220px">
+          <div style="margin-bottom:10px"><strong>Category:</strong> <span id="modal-cat" class="category-pill"></span></div>
+          <div style="margin-bottom:10px"><strong>Rating:</strong> <div id="modal-rating" class="rating-stars"></div></div>
+          <div style="margin-bottom:10px"><strong>Posted by:</strong> <div id="modal-user" style="color:var(--text-light)"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="recommend-modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" style="max-width: 500px;">
+      <div class="modal-header"><strong style="color: var(--primary);">Recommend an Item</strong><button class="close-btn" id="rec-close"><i class="fas fa-times"></i></button></div>
+      <form id="rec-form">
+          <div class="form-group"><label>Title</label><input id="rec-title" required/></div>
+          <div class="form-group"><label>Category</label>
+            <select id="rec-cat" required>
+                <option value="food">Food</option>
+                <option value="study">Study</option>
+                <option value="tech">Tech</option>
+                <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Description</label><textarea id="rec-desc" rows="3" required></textarea></div>
+          <div class="form-group">
+            <label for="rec-image-upload" class="file-upload-label">
+                <i class="fas fa-upload"></i> Upload Image (Optional)
+            </label>
+            <input type="file" id="rec-image-upload" accept="image/*">
+            <span id="file-name-display">No file chosen</span>
+          </div>
+          <div style="text-align:right"><button type="submit" id="rec-submit" class="cta-button">Submit</button></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // === 1. SUPABASE CLIENT INITIALIZATION ===
+        // API KEYS REMOVED FOR SECURITY - YOU MUST ADD YOURS
+       const SUPABASE_URL = "https://tuucgqbyegerndyviefw.supabase.co";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1dWNncWJ5ZWdlcm5keXZpZWZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1NTc1NTksImV4cCI6MjA3NzEzMzU1OX0.fImUoHr86_5MdkDEWu8JXhjSaG2oxbq0IoGhZ6XeH-0";
+
+        const REC_TABLE = 'recommendations';
+        const RATINGS_TABLE = 'recommendations_ratings';
+        
+        let supabase;
+        let currentUser = null;
+        let recommendationsStore = [];
+        let userRatingsStore = {};
+        let userUpvotesStore = {};
+        
+        try {
+                 supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+          
+                
+            
+        } catch (error) {
+            console.error('Error initializing Supabase:', error);
+        }
+
+        // === 2. AUTHENTICATION CHECK ===
+        async function checkAuth() {
+            if (!supabase) return;
+            
+            const { data: { session }, error } = await supabase.auth.getSession();
+            
+            if (session) {
+                currentUser = session.user;
+                loadProfilePic(currentUser);
+                loadAllData();
+            } else {
+                window.location.href = 'index.html'; // Redirect to login
+            }
+        }
+        
+        function loadProfilePic(user) {
+            const profilePic = document.getElementById('user-profile-pic-nav');
+            if (profilePic && user.user_metadata && user.user_metadata.profile_image) {
+                profilePic.src = user.user_metadata.profile_image;
+            } else if (profilePic) {
+                const initials = (user.user_metadata.fullname || user.email)[0].toUpperCase();
+                profilePic.src = `https://placehold.co/40x40/FFFFFF/5E35B1?text=${initials}`;
+            }
+            if (profilePic) profilePic.title = user.user_metadata.fullname || user.email;
+        }
+        
+        const logoutButton = document.getElementById('logout-button');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', async () => {
+                if (!supabase) return;
+                await supabase.auth.signOut();
+                window.location.href = 'index.html';
+            });
+        }
+        
+        // === 3. DATA LOADING ===
+        const cardsEl = document.getElementById('cards');
+        const loadingMessage = document.getElementById('loading-message');
+        const favList = document.getElementById('fav-list');
+        const favLoading = document.getElementById('fav-loading');
+
+        async function loadAllData() {
+            if (!supabase || !currentUser) return;
+            
+            if(loadingMessage) loadingMessage.style.display = 'block';
+            if(favLoading) favLoading.style.display = 'block';
+            if(cardsEl) cardsEl.innerHTML = '';
+            if(favList) favList.innerHTML = '';
+
+            try {
+                const [recs, ratings, userRatings, userUpvotes] = await Promise.all([
+                    supabase.from(REC_TABLE).select(`*, user:users (user_name, user_avatar)`).order('created_at', { ascending: false }),
+                    supabase.from(RATINGS_TABLE).select('rec_id, rating'),
+                    supabase.from(RATINGS_TABLE).select('rec_id, rating').eq('user_id', currentUser.id),
+                    loadLocalUpvotes() 
+                ]);
+
+                if (recs.error) throw recs.error;
+                if (ratings.error) throw ratings.error;
+                if (userRatings.error) throw userRatings.error;
+
+                const ratingsMap = ratings.data.reduce((acc, r) => {
+                    if (!acc[r.rec_id]) acc[r.rec_id] = { sum: 0, count: 0 };
+                    acc[r.rec_id].sum += r.rating;
+                    acc[r.rec_id].count += 1;
+                    return acc;
+                }, {});
+                
+                userRatingsStore = userRatings.data.reduce((acc, r) => {
+                    acc[r.rec_id] = r.rating;
+                    return acc;
+                }, {});
+                
+                userUpvotesStore = userUpvotes;
+                
+                recommendationsStore = recs.data.map(rec => {
+                    const agg = ratingsMap[rec.rec_id] || { sum: 0, count: 0 };
+                    return {
+                        ...rec,
+                        upvotes: rec.likes || 0,
+                        avg_rating: agg.count > 0 ? (agg.sum / agg.count) : 0,
+                        vote_count: agg.count
+                    };
+                });
+
+                if(loadingMessage) loadingMessage.style.display = 'none';
+                if(favLoading) favLoading.style.display = 'none';
+                
+                renderFilteredCards();
+                renderFavs();
+                
+            } catch (error) {
+                console.error('Error loading data:', error.message);
+                if(loadingMessage) loadingMessage.textContent = 'Could not load recommendations.';
+                if(favLoading) favLoading.textContent = 'Could not load favorites.';
+            }
+        }
+
+        // === 4. RENDERING ===
+        
+        function renderFilteredCards() {
+            const activeFilterBtn = document.querySelector('.filter-btn.active');
+            if (!activeFilterBtn) return;
+            
+            const activeFilter = activeFilterBtn.dataset.filter;
+            const queryInput = document.getElementById('search');
+            const sortInput = document.getElementById('sort');
+            
+            const query = queryInput ? queryInput.value.trim().toLowerCase() : '';
+            const sort = sortInput ? sortInput.value : 'popular';
+            
+            let list = recommendationsStore.filter(it => {
+                const matchesFilter = (activeFilter === 'all') ? true : (it.category === activeFilter);
+                const matchesSearch = query ? (it.title.toLowerCase().includes(query) || it.description.toLowerCase().includes(query)) : true;
+                return matchesFilter && matchesSearch;
+            });
+            
+            if(sort === 'popular') list.sort((a,b) => (b.likes || 0) - (a.likes || 0));
+            if(sort === 'rating') list.sort((a,b) => b.avg_rating - a.avg_rating);
+            if(sort === 'new') list.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+
+            if(!cardsEl) return;
+            cardsEl.innerHTML = '';
+            if (list.length === 0) {
+                cardsEl.innerHTML = '<div style="padding:20px;color:var(--text-light)">No recommendations found.</div>';
+                return;
+            }
+            
+            list.forEach(item => {
+                cardsEl.appendChild(createCardElement(item));
+            });
+        }
+        
+        function createCardElement(item) {
+            const user = item.user || { user_name: 'Anonymous', user_avatar: 'https://placehold.co/25x25/ccc/FFFFFF?text=?' };
+            const userRating = userRatingsStore[item.rec_id] || null;
+            const isUpvoted = userUpvotesStore[item.rec_id] || false;
+            
+            const placeholderImg = `https://placehold.co/600x360/5E35B1/FFFFFF?text=${item.title}`;
+
+            const card = document.createElement('div');
+            card.className = 'rec-card';
+            card.innerHTML = `
+              <div class="rec-media"><img src="${item.image_url || placeholderImg}" alt="${item.title}" onerror="this.src='${placeholderImg}'"></div>
+              <div class="rec-body">
+                <div style="display:flex;justify-content:space-between;align-items:start;gap:8px">
+                  <div style="flex:1">
+                    <div class="rec-title">${item.title}</div>
+                    <div class="rec-desc">${item.description}</div>
+                  </div>
+                  <div style="text-align:right">
+                    <div class="rating">
+                        <i class="fas fa-star" style="color: var(--accent);"></i>
+                        <span style="font-size: 1.1rem;">${item.avg_rating.toFixed(1)}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="rec-meta">
+                  <div class="category-pill">${item.category}</div>
+                  <div style="font-size:0.9rem;color:var(--text-light)">${item.vote_count} ratings</div>
+                </div>
+                <div classD="card-actions">
+                  <button class="icon-btn view-btn"><i class="fas fa-eye"></i> View</button>
+                  <button class="icon-btn upvote-btn ${isUpvoted ? 'upvoted':''}">
+                    <i class="fas fa-thumbs-up"></i> Upvote (${item.likes || 0})
+                  </button>
+                </div>
+                <div style="margin-top:10px" class="rating-interactive"></div>
+              </div>
+            `;
+            
+            const starsContainer = card.querySelector('.rating-interactive');
+            if(starsContainer) starsContainer.appendChild(buildStarElements(item, userRating));
+            
+            const viewBtn = card.querySelector('.view-btn');
+            if(viewBtn) viewBtn.addEventListener('click', () => openDetail(item));
+            
+            const upvoteBtn = card.querySelector('.upvote-btn');
+            if(upvoteBtn) upvoteBtn.addEventListener('click', () => toggleUpvote(item));
+            
+            return card;
+        }
+
+        function buildStarElements(item, userRating) {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'stars';
+          for (let i = 1; i <= 5; i++) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.innerHTML = '★';
+            btn.dataset.value = i;
+            if (userRating && i <= userRating) {
+                btn.classList.add('filled');
+            }
+            btn.addEventListener('click', async (e) => {
+              const val = Number(e.currentTarget.dataset.value);
+              await submitRating(item.rec_id, val);
+            });
+            wrapper.appendChild(btn);
+          }
+          return wrapper;
+        }
+        
+        function renderFavs(){
+          if(favList) favList.innerHTML='<div style="color:var(--text-light); font-size: 0.9rem;">Save feature coming soon.</div>';
+        }
+
+        // === 5. ACTIONS (RATING, UPVOTE, POSTING) ===
+
+        async function submitRating(rec_id, rating) {
+          if (!supabase || !currentUser) return;
+          
+          userRatingsStore[rec_id] = rating;
+          renderFilteredCards();
+          
+          const payload = { rec_id, user_id: currentUser.id, rating, created_at: new Date().toISOString() };
+          
+          const { error } = await supabase
+            .from(RATINGS_TABLE)
+            .upsert(payload, { onConflict: 'rec_id, user_id' });
+            
+          if (error) {
+            console.error('Error submitting rating:', error);
+            alert('Could not save your rating.');
+            delete userRatingsStore[rec_id];
+            renderFilteredCards();
+          } else {
+            loadAllData();
+          }
+        }
+        
+        async function toggleUpvote(item) {
+            if (!supabase || !currentUser) return;
+            
+            const rec_id = item.rec_id;
+            const isCurrentlyUpvoted = userUpvotesStore[rec_id] || false;
+            const newLikes = isCurrentlyUpvoted ? (item.likes || 0) - 1 : (item.likes || 0) + 1;
+            
+            userUpvotesStore[rec_id] = !isCurrentlyUpvoted;
+            const localItem = recommendationsStore.find(r => r.rec_id === rec_id);
+            if(localItem) localItem.likes = newLikes;
+            saveLocalUpvotes(userUpvotesStore);
+            renderFilteredCards();
+            
+            const { error } = await supabase
+                .from(REC_TABLE)
+                .update({ likes: newLikes })
+                .eq('rec_id', rec_id);
+            
+            if (error) {
+                console.error('Error updating likes:', error);
+                userUpvotesStore[rec_id] = isCurrentlyUpvoted;
+                if(localItem) localItem.likes = item.likes;
+                saveLocalUpvotes(userUpvotesStore);
+                renderFilteredCards();
+            }
+        }
+        
+        function loadLocalUpvotes() {
+          try {
+            const raw = localStorage.getItem('campushub_local_upvotes_v1');
+            const map = raw ? JSON.parse(raw) : {};
+            return (currentUser && map[currentUser.id]) ? map[currentUser.id] : {};
+          } catch (e) { return {}; }
+        }
+        
+        function saveLocalUpvotes(userMap) {
+          try {
+            if(!currentUser) return;
+            const raw = localStorage.getItem('campushub_local_upvotes_v1');
+            const map = raw ? JSON.parse(raw) : {};
+            map[currentUser.id] = userMap;
+            localStorage.setItem('campushub_local_upvotes_v1', JSON.stringify(map));
+          } catch (e) {}
+        }
+        
+        // === 6. MODAL HANDLING ===
+        const detailModal = document.getElementById('detail-modal');
+        const modalCloseBtn = document.getElementById('modal-close');
+        
+        function openDetail(item){
+          document.getElementById('modal-title').textContent = item.title;
+          document.getElementById('modal-img').src = item.image_url || `https://placehold.co/600x360/5E35B1/FFFFFF?text=${item.title}`;
+          document.getElementById('modal-desc').textContent = item.description;
+          document.getElementById('modal-cat').textContent = item.category;
+          
+          const ratingContainer = document.getElementById('modal-rating');
+          if(ratingContainer) {
+              ratingContainer.innerHTML = '';
+              const stars = buildStarElements(item, userRatingsStore[item.rec_id] || null);
+              ratingContainer.appendChild(stars);
+          }
+          
+          document.getElementById('modal-user').textContent = item.user.user_name || 'Anonymous';
+          if(detailModal) {
+              detailModal.classList.add('active'); 
+              detailModal.setAttribute('aria-hidden','false');
+          }
+        }
+        if(modalCloseBtn) modalCloseBtn.addEventListener('click', ()=>closeModal(detailModal));
+        if(detailModal) detailModal.addEventListener('click', e=>{ if(e.target===detailModal) closeModal(detailModal); });
+        
+        function closeModal(el){ 
+            if(el) {
+                el.classList.remove('active'); 
+                el.setAttribute('aria-hidden','true'); 
+            }
+        }
+        
+        const recModal = document.getElementById('recommend-modal');
+        const recForm = document.getElementById('rec-form');
+        const recSubmitBtn = document.getElementById('rec-submit');
+        const recImageInput = document.getElementById('rec-image-upload');
+        const recFileName = document.getElementById('file-name-display');
+        const addRecBtn = document.getElementById('add-rec');
+        const recCloseBtn = document.getElementById('rec-close');
+
+        if(addRecBtn) addRecBtn.addEventListener('click', ()=>{ recModal.classList.add('active'); recModal.setAttribute('aria-hidden','false'); });
+        if(recCloseBtn) recCloseBtn.addEventListener('click', ()=>closeModal(recModal));
+        if(recModal) recModal.addEventListener('click', e=>{ if(e.target===recModal) closeModal(recModal); });
+        
+        if(recImageInput) recImageInput.addEventListener('change', () => {
+            if(recFileName) recFileName.textContent = recImageInput.files.length > 0
+                ? recImageInput.files[0].name
+                : 'No file chosen';
+        });
+
+        if(recForm) recForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!supabase || !currentUser) return;
+
+            const title = document.getElementById('rec-title').value.trim();
+            const category = document.getElementById('rec-cat').value;
+            const description = document.getElementById('rec-desc').value.trim();
+            const imageFile = recImageInput.files[0];
+            
+            if(!title || !description) return alert('Please fill title and description');
+            
+            if(recSubmitBtn) {
+                recSubmitBtn.disabled = true;
+                recSubmitBtn.textContent = 'Submitting...';
+            }
+            
+            try {
+                let imageUrl = null;
+                let imagePath = null;
+                
+                if (imageFile) {
+                    imagePath = `public/recommendations/${currentUser.id}/${Date.now()}-${imageFile.name}`;
+                    const { data: uploadData, error: uploadError } = await supabase
+                        .storage
+                        .from('recommendation-images')
+                        .upload(imagePath, imageFile);
+                    
+                    if (uploadError) throw uploadError;
+                    
+                    const { data: urlData } = supabase.storage.from('recommendation-images').getPublicUrl(imagePath);
+                    imageUrl = urlData.publicUrl;
+                }
+                
+                const { error: insertError } = await supabase
+                    .from(REC_TABLE)
+                    .insert([{
+                        user_id: currentUser.id,
+                        title: title,
+                        description: description,
+                        category: category,
+                        image_url: imageUrl,
+                        likes: 0
+                    }]);
+                
+                if (insertError) throw insertError;
+                
+                closeModal(recModal);
+                recForm.reset();
+                if(recFileName) recFileName.textContent = 'No file chosen';
+                loadAllData();
+
+            } catch (error) {
+                console.error('Error submitting recommendation:', error.message);
+                alert('Error: ' + error.message);
+            } finally {
+                if(recSubmitBtn) {
+                    recSubmitBtn.disabled = false;
+                    recSubmitBtn.textContent = 'Submit';
+                }
+            }
+        });
+        
+        // === 7. FILTER/SORT HANDLERS ===
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderFilteredCards();
+        }));
+        const searchInput = document.getElementById('search');
+        const sortInput = document.getElementById('sort');
+        if(searchInput) searchInput.addEventListener('input', renderFilteredCards);
+        if(sortInput) sortInput.addEventListener('change', renderFilteredCards);
+
+        // === 8. THEME TOGGLE LOGIC (FIXED) ===
+        const themeBtn = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark');
+            if (themeBtn) themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+        } else {
+            body.classList.remove('dark');
+            if (themeBtn) themeBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+        }
+        
+        if (themeBtn) {
+            themeBtn.onclick = () => {
+                body.classList.toggle('dark');
+                const isDark = body.classList.contains('dark');
+                themeBtn.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                
+                // Re-draw particles with new color
+                if(window.drawParticles) window.drawParticles(true);
+            };
+        }
+        
+        // === 9. PARTICLES ANIMATION (FIXED) ===
+        // ✨ PARTICLES WITH MOUSE INTERACTION
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+const particleCount = 70;
+let mouse = { x: 0, y: 0 };
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+window.addEventListener('mousemove', e => {
+  mouse.x = e.x;
+  mouse.y = e.y;
+});
+
+for (let i = 0; i < particleCount; i++) {
+  particles.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 3 + 1,
+    dx: (Math.random() - 0.5) * 0.7,
+    dy: (Math.random() - 0.5) * 0.7,
+  });
+}
+
+function drawParticles() {
+  if(!ctx) return; // Exit if canvas isn't ready
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = body.classList.contains('dark') ? '#b39ddb' : '#7E57C2';
+  particles.forEach(p => {
+    let dx = mouse.x - p.x;
+    let dy = mouse.y - p.y;
+    let dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 100) {
+      p.x -= dx / 40;
+      p.y -= dy / 40;
+    }
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+    p.x += p.dx;
+    p.y += p.dy;
+    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+  });
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+        
+        
+        // === 10. INITIALIZE ===
+        checkAuth();
+    });
+  </script>
+</body>
+</html>
+

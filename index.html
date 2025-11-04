@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CampusHub – Login</title>
+
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+<style>
+:root {
+  --primary: #5E35B1; --secondary: #7E57C2; --bg1: #f3e9fb; --bg2: #ede7f6;
+  --muted: #6b7280; --text: #111; --card-bg: rgba(255,255,255,0.92);
+  font-family: 'Poppins', sans-serif;
+}
+body.dark {
+  --bg1:#1b132d; --bg2:#2a1f47; --text:#f3e9fb; --muted:#d1c4e9;
+  --card-bg:rgba(46,34,72,0.9); --shadow:rgba(0,0,0,0.6);
+}
+body {
+  margin: 0; color: var(--text); background: linear-gradient(120deg, var(--bg1), var(--bg2));
+  overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column;
+  position: relative; transition: background-color 0.3s, color 0.3s;
+}
+@keyframes float {
+  from {transform: translateY(0) rotate(0);}
+  to {transform: translateY(-40px) rotate(360deg);}
+}
+.bg-shape {
+  position: absolute; border-radius: 50%; opacity: 0.3; filter: blur(50px);
+  animation: float 10s ease-in-out infinite alternate;
+}
+.bg-shape.one { background: var(--primary); width: 200px; height: 200px; top: 20%; left: 5%; animation-delay: 0s; }
+.bg-shape.two { background: var(--secondary); width: 260px; height: 260px; bottom: 10%; right: 10%; animation-delay: 2s; }
+.bg-shape.three { background: #c084fc; width: 180px; height: 180px; top: 60%; left: 40%; animation-delay: 4s; }
+header {
+  height: 70px; background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px; box-shadow: 0 6px 20px rgba(94,53,177,0.25);
+  position: sticky; top: 0; z-index: 100;
+}
+.brand {
+  display: flex; align-items: center; gap: 12px; font-weight: 600;
+  font-size: 1.3rem; color: #fff; text-decoration: none;
+}
+header nav a {
+  color: #fff; text-decoration: none; margin-left: 22px;
+  font-weight: 500; opacity: 0.9; transition: opacity 0.3s;
+}
+header nav a:hover { opacity: 1; }
+#themeToggle {
+  cursor: pointer; font-size: 1.3rem; color: #fff; background: none;
+  border: none; margin-left: 20px; transition: transform 0.3s;
+}
+#themeToggle:hover { transform: rotate(20deg); }
+main {
+  flex: 1; display: grid; grid-template-columns: 1fr 520px; align-items: center;
+  max-width: 1200px; margin: 80px auto; padding: 0 20px; gap: 50px;
+  position: relative; z-index: 5;
+}
+@media(max-width: 900px) {
+  main { grid-template-columns: 1fr; text-align: center; margin: 40px 20px; }
+  .left { margin-bottom: 30px; }
+}
+.left h1 { font-size: 38px; color: var(--primary); margin: 0; }
+body.dark .left h1 { color: var(--secondary); }
+.left p { color: var(--muted); font-size: 1rem; max-width: 55ch; line-height: 1.6; }
+.features {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px; margin-top: 10px;
+}
+.feature {
+  display: flex; align-items: center; gap: 12px; background: var(--card-bg);
+  border-radius: 16px; padding: 14px; border: 1px solid var(--border-color);
+  box-shadow: 0 10px 25px rgba(94,53,177,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+body.dark .feature {
+    background: rgba(46,34,72,0.8);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+.feature:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 35px rgba(94,53,177,0.25);
+}
+.feature .icon {
+  width: 46px; height: 46px; background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff; border-radius: 12px; display: flex; align-items: center;
+  justify-content: center; font-size: 1.2rem;
+}
+.feature div { color: var(--text); }
+.card {
+  position: relative; background: var(--card-bg); border-radius: 20px;
+  padding: 40px 36px; box-shadow: 0 20px 50px rgba(94,53,177,0.2);
+  backdrop-filter: blur(12px); overflow: hidden; border: 1px solid var(--border-color);
+}
+body.dark .card { box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+.card h2 { color: var(--primary); margin-bottom: 8px; }
+body.dark .card h2 { color: var(--secondary); }
+.card p { color: var(--muted); margin-bottom: 18px; }
+form { display: flex; flex-direction: column; gap: 18px; }
+.input-group { position: relative; }
+input {
+  width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #ddd;
+  font-size: 0.95rem; background: var(--bg1); color: var(--text);
+  transition: 0.3s; font-family: 'Poppins', sans-serif;
+}
+body.dark input { border-color: #4a3a6b; background: var(--bg1); }
+input:focus {
+  border-color: var(--primary); box-shadow: 0 0 10px rgba(94,53,177,0.3);
+  outline: none; background: var(--card-bg);
+}
+label {
+  position: absolute; left: 14px; top: 14px; color: var(--muted);
+  pointer-events: none; transition: 0.3s ease; background: var(--bg1); padding: 0 6px;
+}
+body.dark label { background: var(--bg1); }
+input:focus + label, input:not(:placeholder-shown) + label {
+  top: -9px; font-size: 12px; color: var(--primary); background: var(--card-bg);
+}
+body.dark input:focus + label, body.dark input:not(:placeholder-shown) + label {
+    background: var(--bg2);
+}
+button[type="submit"] {
+  margin-top: 8px; background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff; border: none; border-radius: 12px; padding: 14px;
+  font-weight: 600; cursor: pointer; transition: all 0.3s;
+  box-shadow: 0 8px 22px rgba(94,53,177,0.25);
+  font-family: 'Poppins', sans-serif; font-size: 1rem;
+}
+button[type="submit"]:hover { 
+    transform: translateY(-3px); 
+    box-shadow: 0 12px 28px rgba(94,53,177,0.35); 
+}
+#message {
+    text-align: center; font-weight: 500;
+    margin-top: 15px; font-size: 0.95rem;
+}
+.links { text-align: center; margin-top: 20px; color: var(--muted); font-size: 0.9rem; }
+.links a { color: var(--primary); font-weight: 600; text-decoration: none; }
+.links a:hover { text-decoration: underline; }
+footer { text-align: center; color: var(--muted); font-size: 0.85rem; padding: 14px 0 20px; }
+canvas#particles {
+  position: fixed; top: 0; left: 0; z-index: 0;
+  width: 100%; height: 100%; pointer-events: none;
+}
+</style>
+</head>
+
+<script>
+  // In login.html, inside the <script>
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // ... your supabase client initialization ...
+    // const SUPABASE_URL = '...';
+    // const SUPABASE_ANON_KEY = '...';
+    // let supabase = ...;
+
+    // NEW: Add this check function
+    async function checkSession() {
+        if (!supabase) return;
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+            // User is already logged in, send them to the main app
+            window.location.href = 'campushub.html';
+        }
+        // If no session, do nothing. Just let them stay on the login page.
+    }
+
+    // Call the function as soon as the page loads
+    checkSession();
+
+    // ... all your existing code for loginForm, themeToggle, etc. ...
+
+});
+</script>
+<body>
+<canvas id="particles"></canvas>
+<div class="bg-shape one"></div>
+<div class="bg-shape two"></div>
+<div class="bg-shape three"></div>
+
+<header>
+  <a href="index.html".html" class="brand"><i class="fa-solid fa-graduation-cap"></i> CampusHub</a>
+  <nav>
+
+    <a href="CampusRegistor.html">Register</a>
+
+    <button id="themeToggle"><i class="fa-solid fa-moon"></i></button>
+  </nav>
+</header>
+
+<main>
+  <section class="left">
+    <h1>Welcome Back!</h1>
+    <p>Login to access your dashboard, connect with peers, and catch up on all the latest campus happenings.</p>
+    <div class="features">
+      <div class="feature"><div class="icon"><i class="fa-solid fa-bullhorn"></i></div><div>Stay updated with events.</div></div>
+      <div class="feature"><div class="icon"><i class="fa-solid fa-handshake"></i></div><div>Collaborate with teammates.</div></div>
+      <div class="feature"><div class="icon"><i class="fa-solid fa-magnifying-glass"></i></div><div>Find lost items easily.</div></div>
+      <div class="feature"><div class="icon"><i class="fa-solid fa-comments"></i></div><div>Ask questions & share.</div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Login to CampusHub</h2>
+    <p>Enter your credentials to access your dashboard.</p>
+
+    <form id="loginForm">
+      <div class="input-group">
+        <input type="email" id="email" placeholder=" " required>
+        <label for="email">College Email</label>
+      </div>
+      <div class="input-group">
+        <input type="password" id="password" placeholder=" " required>
+        <label for="password">Password</label>
+      </div>
+      <button type="submit">Login</button>
+    </form>
+
+    <p id="message"></p>
+
+    <div class="links">
+      Don’t have an account? <a href="CampusRegistor.html">Register here</a>
+      <br>
+      <a href="#" id="resetLink" style="margin-top: 10px; display: inline-block;">Forgot Password?</a>
+    </div>
+  </section>
+</main>
+
+<footer>© 2025 CampusHub | Designed for Connected Campuses 💜</footer>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://tuucgqbyegerndyviefw.supabase.co";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1dWNncWJ5ZWdlcm5keXZpZWZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1NTc1NTksImV4cCI6MjA3NzEzMzU1OX0.fImUoHr86_5MdkDEWu8JXhjSaG2oxbq0IoGhZ6XeH-0";
+
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  const form = document.getElementById("loginForm");
+  const msg = document.getElementById("message");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    msg.textContent = "⏳ Signing in...";
+
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) {
+      msg.textContent = "❌ " + error.message;
+      msg.style.color = "red";
+    } else {
+      msg.textContent = "✅ Login successful! Redirecting...";
+      msg.style.color = "green";
+      setTimeout(() => window.location.href = "campushub.html", 1000);
+    }
+  });
+
+
+      
+      // Handle Password Reset
+      resetLink.addEventListener("click", async (e) => {
+          e.preventDefault();
+          const email = document.getElementById("email").value.trim();
+          if (!email) {
+              setStatus("Please enter your email in the field to reset password.", true);
+              return;
+          }
+          
+          setStatus("⏳ Sending reset link...", false);
+          const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+              redirectTo: window.location.origin + "/index.html", // Where user lands after reset
+          });
+          
+          if (error) {
+              setStatus("❌ Error: " + error.message, true);
+          } else {
+              setStatus("✅ Password reset email sent! Check your inbox.", false);
+          }
+      });
+      
+   if (form) {
+      form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          setStatus("⚠️ Login is disabled. Supabase keys not set.", true);
+      });
+  }
+</script>
+  
+<script>
+// 🌙 DARK / LIGHT MODE
+const themeBtn = document.getElementById('themeToggle');
+const body = document.body;
+if (localStorage.getItem('theme') === 'dark') {
+  body.classList.add('dark');
+  if(themeBtn) themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+}
+if(themeBtn) {
+    themeBtn.onclick = () => {
+      body.classList.toggle('dark');
+      if (body.classList.contains('dark')) {
+        themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+        localStorage.setItem('theme', 'dark');
+      } else {
+        themeBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+        localStorage.setItem('theme', 'light');
+      }
+    };
+}
+
+// ✨ PARTICLES WITH MOUSE INTERACTION
+const canvas = document.getElementById('particles');
+if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    const particleCount = 70;
+    let mouse = { x: 0, y: 0 };
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    window.addEventListener('mousemove', e => {
+      mouse.x = e.x;
+      mouse.y = e.y;
+    });
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 3 + 1,
+        dx: (Math.random() - 0.5) * 0.7,
+        dy: (Math.random() - 0.5) * 0.7,
+      });
+    }
+
+    function drawParticles() {
+      if(!ctx) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = body.classList.contains('dark') ? '#b39ddb' : '#7E57C2';
+      particles.forEach(p => {
+        let dx = mouse.x - p.x;
+        let dy = mouse.y - p.y;
+        let dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 100) {
+          p.x -= dx / 40;
+          p.y -= dy / 40;
+        }
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+      });
+      requestAnimationFrame(drawParticles);
+    }
+    drawParticles();
+}
+</script>
+</body>
+</html>
