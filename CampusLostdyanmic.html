@@ -628,9 +628,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     location: location,
                     status: type
                 }])
-                .select(`
-                    *,
-                    user:users ( user_name)
+              .select(`
+    *,
+    user:auth.users(email)
+`)
+
                 `)
                 .single(); // Get the new row back with user data
 
@@ -676,4 +678,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
