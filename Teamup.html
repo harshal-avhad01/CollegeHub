@@ -10,8 +10,19 @@
 
 <style>
 
+.orb {
+  position: fixed; border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.4;
+  z-index: -1;
+  pointer-events: none;
+}
+.orb-1 { width: 300px; height: 300px; left: 10%; top: 15%; background: var(--primary); animation: float1 8s ease-in-out infinite; }
+.orb-2 { width: 280px; height: 280px; right: 8%; bottom: 10%; background: var(--secondary); animation: float2 9s ease-in-out infinite; }
+@keyframes float1 { 0%,100%{transform:translateY(0)}50%{transform:translateY(25px)} }
+@keyframes float2 { 0%,100%{transform:translateY(0)}50%{transform:translateY(-25px)} }
 
-
+  
 :root { --primary:#5E35B1; --primary-grad:linear-gradient(135deg,#7E57C2,#5E35B1); --bg1:#f3e9fb; --bg2:#ede7f6; --card:#fff; --text:#333; --text-light:#555; --border:#e0e0e0; }
 body.dark { --bg1:#1b132d; --bg2:#2a1f47; --card:#2a1f47; --text:#f3e9fb; --text-light:#d1c4e9; --border:#4a3a6b; }
 body{font-family:'Poppins',sans-serif;background:linear-gradient(120deg,var(--bg1),var(--bg2));color:var(--text);margin:0;padding-top:70px;transition:0.4s;}
@@ -209,4 +220,5 @@ document.getElementById('logout-btn').onclick = async () => { await supabase.aut
 init();
 </script>
 </body>
+
 </html>
