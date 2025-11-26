@@ -10,7 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-/* === NEW: Unified Design System === */
+/* === Unified Design System === */
 :root {
   --primary: #5E35B1;
   --secondary: #7E57C2;
@@ -23,6 +23,8 @@
   --border-color: #e0e0e0;
   --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.1);
+  --badge-bg: rgba(94, 53, 177, 0.1);
+  --badge-text: #5E35B1;
 }
 
 body.dark {
@@ -34,6 +36,8 @@ body.dark {
   --border-color: #4a3a6b;
   --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.3);
+  --badge-bg: rgba(126, 87, 194, 0.2);
+  --badge-text: #b39ddb;
 }
 
 body {
@@ -43,9 +47,10 @@ body {
   color: var(--text-color);
   transition: background 0.4s, color 0.4s;
   padding-top: 70px; /* Space for header */
+  min-height: 100vh;
 }
 
-/* === NEW: Unified Header === */
+/* === Unified Header === */
 header {
   height: 70px;
   background: var(--primary-gradient);
@@ -181,6 +186,74 @@ body.dark .hero h2 { color: var(--secondary); }
   margin: 0 auto;
 }
 
+/* === NEW: Search & Filters === */
+.filters-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin: 30px auto;
+    padding: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+    box-shadow: var(--shadow);
+    max-width: 900px;
+    align-items: center;
+    transition: 0.3s;
+}
+
+.search-wrapper {
+    position: relative;
+    flex-grow: 1;
+    max-width: 400px;
+    min-width: 250px;
+}
+
+.search-wrapper i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 12px 12px 40px;
+    border-radius: 30px;
+    border: 1px solid var(--border-color);
+    background: var(--bg1);
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--card-bg);
+}
+
+.filter-select {
+    padding: 12px 20px;
+    border-radius: 30px;
+    border: 1px solid var(--border-color);
+    background: var(--bg1);
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.filter-select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+
 /* Event Grid */
 .events-grid {
   margin-top: 40px;
@@ -217,11 +290,24 @@ body.dark .card { box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
 .card .content {
   padding: 20px;
 }
+.card .dept-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--badge-bg);
+    color: var(--badge-text);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
 .card h3 {
   color: var(--primary);
   font-size: 20px;
   margin-bottom: 8px;
-  padding-right: 110px; /* Prevent text from going under buttons */
+  margin-top: 4px;
+  padding-right: 90px; /* Prevent text from going under buttons */
 }
 body.dark .card h3 { color: var(--secondary); }
 .card .description {
@@ -232,7 +318,7 @@ body.dark .card h3 { color: var(--secondary); }
 .card .meta {
   font-size: 13px;
   color: var(--text-light);
-  margin-bottom: 14px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -246,6 +332,7 @@ body.dark .card h3 { color: var(--secondary); }
   text-decoration: none;
   font-weight: 600;
   transition: 0.3s;
+  margin-top: 5px;
 }
 .card .register-btn:hover {
   transform: translateY(-2px);
@@ -258,7 +345,7 @@ body.dark .card h3 { color: var(--secondary); }
     pointer-events: none;
 }
 
-/* === FINAL FIXED BUTTON LAYOUT === */
+/* Actions */
 .card-actions {
   position: absolute;
   top: 15px;
@@ -267,7 +354,7 @@ body.dark .card h3 { color: var(--secondary); }
   flex-direction: row;
   gap: 10px;
   z-index: 50;
-  pointer-events: none; /* Allows clicking underneath gap area */
+  pointer-events: none; 
 }
 
 .action-btn {
@@ -282,7 +369,7 @@ body.dark .card h3 { color: var(--secondary); }
   font-size: 16px;
   box-shadow: 0 3px 10px rgba(0,0,0,0.2);
   transition: transform 0.2s ease;
-  pointer-events: auto; /* Re-enable clicking for buttons */
+  pointer-events: auto;
   position: relative !important;
   top: auto !important;
   right: auto !important;
@@ -328,15 +415,16 @@ body.dark .popup-content h2 { color: var(--secondary); }
     font-size: 14px; margin-top: 12px; display:block;
     color: var(--text-color); font-weight: 500;
 }
-.popup-content input, .popup-content textarea {
+.popup-content input, .popup-content textarea, .popup-content select {
   width: 100%; 
   margin-top: 6px;
   padding: 10px; margin-bottom: 12px;
   border-radius: 8px; border: 1px solid var(--border-color); font-family: inherit;
   background: var(--bg1);
   color: var(--text-color);
+  box-sizing: border-box;
 }
-.popup-content input:focus, .popup-content textarea:focus {
+.popup-content input:focus, .popup-content textarea:focus, .popup-content select:focus {
     border-color: var(--primary);
     background-color: var(--card-bg);
     box-shadow: 0 0 10px rgba(94, 53, 177, 0.3);
@@ -365,6 +453,7 @@ input[type="file"] { display: none; }
     border-radius: 8px; text-align: center; font-weight: 500; color: var(--text-light);
     cursor: pointer; transition: all 0.3s ease;
     margin-top: 6px;
+    box-sizing: border-box;
 }
 .file-upload-label:hover {
     border-color: var(--primary); background-color: var(--bg1); color: var(--primary);
@@ -405,15 +494,30 @@ footer {
   </div>
 </header>
 
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
-
 <main>
     <section class="hero">
       <h2>Upcoming Campus Events 🎉</h2>
       <p>Stay informed and participate in exciting college activities, seminars, and festivals.</p>
     </section>
  
+    <!-- === NEW: Search and Filters === -->
+    <section class="filters-container">
+        <div class="search-wrapper">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" class="search-input" placeholder="Search by event, venue, or dept...">
+        </div>
+        
+        <select id="deptFilter" class="filter-select">
+            <option value="all">Loading Depts...</option>
+        </select>
+
+        <select id="sortFilter" class="filter-select">
+            <option value="date_asc">Date: Soonest</option>
+            <option value="date_desc">Date: Latest</option>
+            <option value="newest_post">Recently Posted</option>
+        </select>
+    </section>
+
     <section class="events-grid" id="eventsList">
         <p id="loading-message">Loading events...</p>
     </section>
@@ -424,11 +528,22 @@ footer {
   <div class="popup-content">
     <form id="eventForm">
         <h2>Add New Event</h2>
+        
         <label for="eventName">Event Name</label>
         <input type="text" id="eventName" placeholder="e.g. 'TechFest 2025'" required>
         
-        <label for="eventDate">Date & Time</label>
-        <input type="datetime-local" id="eventDate">
+        <div style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+                <label for="eventDate">Date & Time</label>
+                <input type="datetime-local" id="eventDate" required>
+            </div>
+            <div style="flex: 1;">
+                <label for="eventDept">Department</label>
+                <select id="eventDept" required>
+                    <option value="" disabled selected>Loading...</option>
+                </select>
+            </div>
+        </div>
         
         <label for="eventVenue">Venue</label>
         <input type="text" id="eventVenue" placeholder="e.g. 'Main Auditorium'" required>
@@ -436,7 +551,7 @@ footer {
         <label for="eventDescription">Description</label>
         <textarea id="eventDescription" rows="3" placeholder="Description"></textarea>
 
-        <label for="eventLink">Registration Link (Google Form, etc.)</label>
+        <label for="eventLink">Registration Link (Optional)</label>
         <input type="url" id="eventLink" placeholder="https://forms.google.com/..." >
         
         <label for="eventImageUpload" class="file-upload-label">
@@ -464,6 +579,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let supabase;
     let currentUser = null;
+    let allEventsData = []; // Store events locally for filtering
+    let departmentsData = []; // Store departments locally
     
     try {
              supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -481,6 +598,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (session) {
             currentUser = session.user;
             loadProfilePic(currentUser);
+            await loadDepartments(); // Load depts before events
             await loadEvents();
         } else {
             window.location.href = 'index.html';
@@ -540,9 +658,53 @@ document.addEventListener('DOMContentLoaded', () => {
             : 'No file chosen';
     });
 
-    // === 5. LOAD EVENTS ===
+    // === 5. NEW: LOAD DEPARTMENTS DYNAMICALLY ===
+    async function loadDepartments() {
+        if (!supabase) return;
+
+        const { data, error } = await supabase
+            .from('departments')
+            .select('dept_id, dept_name')
+            .order('dept_name', { ascending: true });
+
+        const filterSelect = document.getElementById('deptFilter');
+        const formSelect = document.getElementById('eventDept');
+
+        if (error) {
+            console.error("Error loading departments:", error);
+            filterSelect.innerHTML = '<option value="all">All (Dept Load Failed)</option>';
+            formSelect.innerHTML = '<option value="" disabled selected>Error loading departments</option>';
+            return;
+        }
+
+        departmentsData = data || [];
+        
+        // Populate Filter
+        filterSelect.innerHTML = '<option value="all">All Departments</option>';
+        departmentsData.forEach(dept => {
+            const opt = document.createElement('option');
+            opt.value = dept.dept_id; // Using ID for filtering
+            opt.textContent = dept.dept_name;
+            filterSelect.appendChild(opt);
+        });
+
+        // Populate Add Event Form
+        formSelect.innerHTML = '<option value="" disabled selected>Select Department</option>';
+        departmentsData.forEach(dept => {
+            const opt = document.createElement('option');
+            opt.value = dept.dept_id; // Value is dept_id for foreign key insertion
+            opt.textContent = dept.dept_name;
+            formSelect.appendChild(opt);
+        });
+    }
+
+
+    // === 6. LOAD EVENTS & FILTERING LOGIC ===
     const eventsList = document.getElementById("eventsList");
     const loadingMessage = document.getElementById("loading-message");
+    const searchInput = document.getElementById("searchInput");
+    const deptFilter = document.getElementById("deptFilter");
+    const sortFilter = document.getElementById("sortFilter");
 
     async function loadEvents() {
         if (!supabase) return;
@@ -550,14 +712,14 @@ document.addEventListener('DOMContentLoaded', () => {
         loadingMessage.style.display = 'block';
         eventsList.innerHTML = '';
         
-        // Fetch events and join with users table (safe version without alias)
+        // Fetch events with joined departments and users
         const { data, error } = await supabase
             .from("events")
             .select(`
                 *,
-                users ( user_name, user_avatar, email )
-            `)
-            .order("date", { ascending: true });
+                users ( user_name, user_avatar, email ),
+                departments ( dept_name )
+            `);
 
         loadingMessage.style.display = 'none';
 
@@ -569,20 +731,71 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (!data || data.length === 0) {
              eventsList.innerHTML = '<p>No events scheduled yet. Check back soon!</p>';
+             allEventsData = [];
              return;
         }
-      
-        data.forEach(event => {
-            eventsList.appendChild(createEventCard(event));
-        });
+       
+        allEventsData = data;
+        applyFilters(); // Initial render
     }
+
+    // Function to Filter and Render Events
+    function applyFilters() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedDeptId = deptFilter.value; // This is now an ID (or 'all')
+        const sortOrder = sortFilter.value;
+
+        // 1. Filter
+        let filtered = allEventsData.filter(event => {
+            // Safe department name extraction
+            const deptName = event.departments ? event.departments.dept_name : 'General';
+            
+            const matchSearch = 
+                (event.title && event.title.toLowerCase().includes(searchTerm)) ||
+                (event.description && event.description.toLowerCase().includes(searchTerm)) ||
+                (event.venue && event.venue.toLowerCase().includes(searchTerm)) ||
+                (deptName.toLowerCase().includes(searchTerm));
+            
+            // Filter by ID if not 'all'
+            // Using loose comparison (==) in case dept_id is int and value is string
+            const matchDept = selectedDeptId === 'all' || (event.dept_id == selectedDeptId);
+
+            return matchSearch && matchDept;
+        });
+
+        // 2. Sort
+        filtered.sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            
+            if (sortOrder === 'date_asc') return dateA - dateB;
+            if (sortOrder === 'date_desc') return dateB - dateA;
+            if (sortOrder === 'newest_post') return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+            return 0;
+        });
+
+        // 3. Render
+        eventsList.innerHTML = '';
+        if (filtered.length === 0) {
+            eventsList.innerHTML = '<p>No events found matching your criteria.</p>';
+        } else {
+            filtered.forEach(event => {
+                eventsList.appendChild(createEventCard(event));
+            });
+        }
+    }
+
+    // Event Listeners for Filters
+    searchInput.addEventListener('input', applyFilters);
+    deptFilter.addEventListener('change', applyFilters);
+    sortFilter.addEventListener('change', applyFilters);
     
     function createEventCard(event) {
         const card = document.createElement("div");
         card.className = "card";
         card.dataset.id = event.event_id;
         
-        // --- ROBUST USER INFO EXTRACTION ---
+        // User Info
         let userInfo = { user_name: "Campus Admin", user_avatar: null };
         if (event.users) {
             const userObj = Array.isArray(event.users) ? event.users[0] : event.users;
@@ -603,13 +816,16 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (e) { eventDate = event.date; }
         }
 
-        // --- SHARE TEXT FORMATTING ---
-        // Now includes the registration link if it exists
+        // Department Info from joined table
+        const departmentName = event.departments ? event.departments.dept_name : 'General';
+
+        // Share Text
         const regLinkText = event.registration_link ? `\n🔗 *Register here:* ${event.registration_link}` : '';
+        const deptText = `[${departmentName}] `;
         const shareText =
 `🎉 *CAMPUSHUB EVENT* 🎉
 
-📌 *Event:* ${event.title}
+📌 *Event:* ${deptText}${event.title}
 📅 *Date:* ${eventDate}
 📍 *Venue:* ${event.venue}
 
@@ -621,11 +837,10 @@ See you there!`;
         const placeholderImg = `https://placehold.co/600x360/5E35B1/FFFFFF?text=${event.title}`;
         const canDelete = (currentUser && currentUser.id === event.user_id);
         
-        // Determine if "Register Now" button should be active
         const regBtnHref = event.registration_link ? event.registration_link : '#';
         const regBtnClass = event.registration_link ? 'register-btn' : 'register-btn disabled';
         const regBtnText = event.registration_link ? 'Register Now' : 'No Registration Link';
-
+        
 
         card.innerHTML = `
           <div class="card-actions">
@@ -643,18 +858,21 @@ See you there!`;
 
           <img src="${event.image_url || placeholderImg}" alt="${event.title}" onerror="this.src='${placeholderImg}'">
           <div class="content">
+            <span class="dept-badge">${departmentName}</span>
             <h3>${event.title}</h3>
-            <p class="description">${event.description || "No description provided."}</p>
             <div class="meta"><i class="fa-solid fa-calendar-days"></i> ${eventDate}</div>
             <div class="meta"><i class="fa-solid fa-map-marker-alt"></i> ${event.venue || "Venue: TBA"}</div>
-            <div class="meta" style="font-size: 0.8rem; margin-top: 5px;">
+            
+            <p class="description">${event.description || "No description provided."}</p>
+            
+            <div class="meta" style="font-size: 0.8rem; margin-top: 10px; border-top: 1px solid var(--border-color); padding-top: 10px;">
                 <i class="fa-solid fa-user-circle"></i> Posted by <strong>${userInfo.user_name}</strong>
             </div>
-            <a href="${regBtnHref}" target="_blank" class="${regBtnClass}" style="margin-top: 15px;">${regBtnText}</a>
+            <a href="${regBtnHref}" target="_blank" class="${regBtnClass}">${regBtnText}</a>
           </div>
         `;
         
-        // === EVENT LISTENERS ===
+        // Listeners for buttons
         card.querySelector('.copy-btn').addEventListener('click', async (e) => {
             e.stopPropagation();
             try { await navigator.clipboard.writeText(shareText); alert('✅ Event details copied!'); } 
@@ -682,7 +900,7 @@ See you there!`;
         return card;
     }
 
-    // === 6. ADD EVENT ===
+    // === 7. ADD EVENT ===
     eventForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         if (!supabase || !currentUser) return;
@@ -690,11 +908,12 @@ See you there!`;
         const name = document.getElementById("eventName").value.trim();
         const date = document.getElementById("eventDate").value;
         const venue = document.getElementById("eventVenue").value.trim();
+        const deptId = document.getElementById("eventDept").value; // This is now the ID
         const description = document.getElementById("eventDescription").value.trim();
-        const regLink = document.getElementById("eventLink").value.trim(); // NEW
+        const regLink = document.getElementById("eventLink").value.trim();
         const imageFile = eventImageUpload.files[0];
 
-        if (!name || !venue) return alert("Please enter event name and venue!");
+        if (!name || !venue || !deptId) return alert("Please enter event name, venue, and select a department!");
 
         const saveButton = document.getElementById('saveEvent');
         saveButton.disabled = true;
@@ -712,16 +931,16 @@ See you there!`;
                 imageUrl = urlData.publicUrl;
             }
             
-            let userDeptId = currentUser.user_metadata.dept_id || null;
-
+            // Insert with dept_id instead of string
             const { error: insertError } = await supabase
                 .from("events")
                 .insert([{ 
                     title: name, 
                     date: date || null, 
                     venue: venue, 
+                    dept_id: deptId, // Insert FK ID
                     description: description,
-                    registration_link: regLink || null, // NEW: Insert the link
+                    registration_link: regLink || null,
                     image_url: imageUrl,
                     image_path: imagePath,
                     user_id: currentUser.id 
@@ -732,6 +951,9 @@ See you there!`;
             popup.classList.remove("active");
             eventForm.reset();
             fileNameDisplay.textContent = 'No file chosen';
+            // Reset dropdown default
+            document.getElementById("eventDept").selectedIndex = 0;
+            
             await loadEvents(); 
 
         } catch (error) {
@@ -743,7 +965,7 @@ See you there!`;
         }
     });
 
-    // === 7. DELETE EVENT ===
+    // === 8. DELETE EVENT ===
     async function deleteEvent(id) {
         if (!supabase) return;
         try {
@@ -758,8 +980,9 @@ See you there!`;
                 await supabase.storage.from('event-posters').remove([eventData.image_path]);
             }
 
-            const cardToRemove = document.querySelector(`.card[data-id='${id}']`);
-            if (cardToRemove) cardToRemove.remove();
+            // Remove locally and re-render
+            allEventsData = allEventsData.filter(e => e.event_id !== id);
+            applyFilters();
             alert("Event deleted successfully.");
 
         } catch (error) {
@@ -768,7 +991,7 @@ See you there!`;
         }
     }
 
-    // === 8. INITIALIZE ===
+    // === 9. INITIALIZE ===
     checkAuth();
 });
 </script>
