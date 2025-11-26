@@ -51,6 +51,41 @@ header {
 }
 .cta-button:hover { background: rgba(255,255,255,0.3); transform: translateY(-2px); }
 
+/* === Search Bar === */
+.search-container {
+  position: relative;
+  width: 260px;
+}
+.search-container input {
+  width: 100%;
+  padding: 10px 35px;
+  border-radius: 30px;
+  border: 1px solid rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  font-family: inherit;
+  transition: 0.3s;
+}
+.search-container input::placeholder { color: #eee; }
+.search-container input:focus {
+  outline: none;
+  background: rgba(255,255,255,0.3);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+}
+.search-container i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+  opacity: 0.8;
+}
+body.dark .search-container input {
+  background: rgba(0,0,0,0.3);
+  border-color: rgba(255,255,255,0.1);
+}
+body.dark .search-container i { color: #ddd; }
+
 /* Backgrounds */
 .orb { position: fixed; border-radius: 50%; filter: blur(90px); opacity: 0.4; z-index: -1; pointer-events: none; }
 .orb-1 { width: 300px; height: 300px; left: 10%; top: 15%; background: var(--primary); animation: float 8s ease-in-out infinite alternate; }
@@ -194,6 +229,13 @@ input:focus, select:focus, textarea:focus {
     <a href="qa_with_answers_share_answer.html" class="nav-link">Q&A</a>
     <a href="contact.html" class="nav-link">Contact</a>
   </nav>
+
+   <!-- Search Bar -->
+  <div class="search-container">
+    <i class="fa fa-search"></i>
+    <input type="text" id="searchBar" placeholder="Search posts...">
+  </div>
+
   <div class="nav-user-area">
     <button id="create-post-btn" class="cta-button"><i class="fas fa-plus"></i> Create</button>
     <button id="themeToggle"><i class="fa-solid fa-moon"></i></button>
@@ -483,5 +525,4 @@ input:focus, select:focus, textarea:focus {
     init();
 </script>
 </body>
-
 </html>
