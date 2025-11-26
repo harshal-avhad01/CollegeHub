@@ -10,47 +10,100 @@
   <style>
 
     .orb {
-  position: fixed; border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0.4;
-  z-index: -1;
-  pointer-events: none;
-}
-.orb-1 { width: 300px; height: 300px; left: 10%; top: 15%; background: var(--primary); animation: float1 8s ease-in-out infinite; }
-.orb-2 { width: 280px; height: 280px; right: 8%; bottom: 10%; background: var(--secondary); animation: float2 9s ease-in-out infinite; }
-@keyframes float1 { 0%,100%{transform:translateY(0)}50%{transform:translateY(25px)} }
-@keyframes float2 { 0%,100%{transform:translateY(0)}50%{transform:translateY(-25px)} }
+      position: fixed; border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.4;
+      z-index: -1;
+      pointer-events: none;
+    }
+    .orb-1 { width: 300px; height: 300px; left: 10%; top: 15%; background: var(--primary); animation: float1 8s ease-in-out infinite; }
+    .orb-2 { width: 280px; height: 280px; right: 8%; bottom: 10%; background: var(--secondary); animation: float2 9s ease-in-out infinite; }
+    @keyframes float1 { 0%,100%{transform:translateY(0)}50%{transform:translateY(25px)} }
+    @keyframes float2 { 0%,100%{transform:translateY(0)}50%{transform:translateY(-25px)} }
     
-    :root { --primary:#5E35B1; --primary-grad:linear-gradient(135deg,#7E57C2,#5E35B1); --bg1:#f3e9fb; --bg2:#ede7f6; --card:#fff; --text:#333; --text-light:#555; --border:#e0e0e0; }
-    body.dark { --bg1:#1b132d; --bg2:#2a1f47; --card:#2a1f47; --text:#f3e9fb; --text-light:#d1c4e9; --border:#4a3a6b; }
+    :root { --primary:#5E35B1; --primary-grad:linear-gradient(135deg,#7E57C2,#5E35B1); --bg1:#f3e9fb; --bg2:#ede7f6; --card:#fff; --text:#333; --text-light:#555; --border:#e0e0e0; --badge-bg: rgba(94, 53, 177, 0.1); --badge-text: #5E35B1; }
+    body.dark { --bg1:#1b132d; --bg2:#2a1f47; --card:#2a1f47; --text:#f3e9fb; --text-light:#d1c4e9; --border:#4a3a6b; --badge-bg: rgba(126, 87, 194, 0.2); --badge-text: #b39ddb; }
     body{font-family:'Poppins',sans-serif;background:linear-gradient(120deg,var(--bg1),var(--bg2));color:var(--text);margin:0;padding-top:70px;transition:0.4s;}
     
-    header{height:70px;background:var(--primary-grad);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:0 28px;position:fixed;top:0;width:100%;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.2);}
+    /* Header Fixed */
+    header{height:70px;background:var(--primary-grad);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:0 28px;position:fixed;top:0;width:100%;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.2); box-sizing: border-box;}
     .nav-logo{font-size:1.5rem;font-weight:700;color:#fff;text-decoration:none;display:flex;align-items:center;gap:10px;}
     .nav-menu{display:flex;gap:15px;}
     .nav-link{text-decoration:none;color:#fff;opacity:0.9;padding:10px;transition:0.3s;}
     .nav-link:hover,.nav-link.active{opacity:1;border-bottom:3px solid #fff;}
     .nav-user{display:flex;align-items:center;gap:15px;}
     .user-pic{width:40px;height:40px;border-radius:50%;border:2px solid rgba(255,255,255,0.8);cursor:pointer;object-fit:cover;}
-    .cta-btn{background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.5);padding:8px 18px;border-radius:50px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:0.3s;}
-    .cta-btn:hover{background:rgba(255,255,255,0.3);transform:translateY(-2px);}
+    
+    /* === CTA Button (Header) === */
+    .cta-button {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-family: 'Poppins', sans-serif;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+    .cta-button:hover {
+        background: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
 
     main{max-width:900px;margin:30px auto;padding:0 20px;}
-    h2{color:var(--primary);display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+    h2{color:var(--primary);display:flex;align-items:center;gap:10px;margin-bottom:20px; justify-content: center;}
     body.dark h2{color:#7E57C2;}
     
-    .filters{display:flex;gap:10px;margin-bottom:25px;flex-wrap:wrap;}
-    .filter-btn{background:var(--card);border:1px solid var(--border);padding:8px 16px;border-radius:20px;cursor:pointer;font-weight:500;color:var(--text-light);transition:0.2s;}
-    .filter-btn:hover,.filter-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+    /* === Search & Filter Top Bar === */
+    .top-controls {
+        display: flex; gap: 15px; justify-content: center;
+        margin-bottom: 20px;
+    }
+    .search-wrapper { position: relative; flex-grow: 1; max-width: 500px; }
+    .search-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-light); }
+    .search-input {
+        width: 100%; padding: 12px 12px 12px 40px; border-radius: 30px;
+        border: 1px solid var(--border); background: var(--bg1); color: var(--text);
+        font-family: inherit; font-size: 14px; box-sizing: border-box; transition: 0.3s;
+    }
+    .search-input:focus { outline: none; border-color: var(--primary); background: var(--card); }
+    
+    .sort-select {
+        padding: 0 20px; border-radius: 30px;
+        border: 1px solid var(--border); background: var(--bg1); color: var(--text);
+        font-family: inherit; font-size: 14px; cursor: pointer; transition: 0.3s;
+    }
+    .sort-select:focus { outline: none; border-color: var(--primary); }
 
+    /* === Category Tabs (Restored) === */
+    .filters { display:flex; gap:10px; margin-bottom:25px; flex-wrap:wrap; justify-content: center; }
+    .filter-btn {
+        background:var(--card); border:1px solid var(--border);
+        padding:8px 18px; border-radius:20px; cursor:pointer;
+        font-weight:500; color:var(--text-light); transition:0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+        background:var(--primary); color:#fff; border-color:var(--primary);
+        box-shadow: 0 4px 12px rgba(94, 53, 177, 0.3);
+    }
+
+    /* Card Styles */
     .q-card{background:var(--card);border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 4px 15px rgba(0,0,0,0.05);border:1px solid var(--border);position:relative;}
-    .q-header{display:flex;align-items:center;gap:12px;margin-bottom:15px;padding-right:130px;}
+    .q-header{display:flex;align-items:center;gap:12px;margin-bottom:10px;padding-right:130px;}
     .q-header img{width:45px;height:45px;border-radius:50%;object-fit:cover;border:2px solid var(--bg1);}
     .q-meta{display:flex;flex-direction:column;}
     .q-meta strong{color:var(--primary);font-size:1.05rem;}
     body.dark .q-meta strong{color:#9FA8DA;}
     .q-date{font-size:0.85rem;color:var(--text-light);}
-    .cat-pill{display:inline-block;font-size:0.75rem;padding:4px 10px;border-radius:12px;background:var(--bg2);color:var(--primary);font-weight:600;margin-left:10px;text-transform:uppercase;}
+    
+    .cat-pill{display:inline-block;font-size:0.75rem;padding:4px 10px;border-radius:12px;background:var(--bg2);color:var(--primary);font-weight:600;margin-right:8px;text-transform:uppercase;}
 
     .card-actions{position:absolute;top:20px;right:20px;display:flex;gap:8px;}
     .act-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--bg1);color:var(--text-light);cursor:pointer;display:grid;place-items:center;transition:0.2s;font-size:15px;}
@@ -87,7 +140,6 @@
 </head>
 <body>
 
-  
   <header>
     <a href="campushub.html" class="nav-logo"><i class="fa-solid fa-graduation-cap"></i> CampusHub</a>
     <nav class="nav-menu" id="nav-menu-links">
@@ -99,7 +151,7 @@
       <a href="contact.html" class="nav-link">Contact</a>
     </nav>
     <div class="nav-user">
-      <button id="ask-btn" class="cta-btn"><i class="fas fa-plus"></i> Ask</button>
+      <button id="ask-btn" class="cta-button"><i class="fas fa-plus"></i> Ask</button>
       <button id="themeToggle" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;"><i class="fas fa-moon"></i></button>
       <a href="CampusprofileDynamic.html"><img id="user-pic" class="user-pic" src="https://placehold.co/40/5E35B1/fff?text=U"></a>
       <button id="logout-btn" style="background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;"><i class="fa-solid fa-right-from-bracket"></i></button>
@@ -110,6 +162,21 @@
 
   <main>
     <h2><i class="fas fa-comments"></i> Campus Forum</h2>
+    
+    <!-- === Search & Filters === -->
+    <div class="top-controls">
+        <div class="search-wrapper">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" class="search-input" placeholder="Search questions...">
+        </div>
+        <select id="sortFilter" class="sort-select">
+            <option value="newest">Newest First</option>
+            <option value="popular">Most Liked</option>
+            <option value="oldest">Oldest First</option>
+        </select>
+    </div>
+
+    <!-- === Restored Tab Buttons === -->
     <div class="filters">
         <button class="filter-btn active" data-cat="all">All Topics</button>
         <button class="filter-btn" data-cat="General">General</button>
@@ -118,6 +185,7 @@
         <button class="filter-btn" data-cat="Career">Career</button>
         <button class="filter-btn" data-cat="Social">Social</button>
     </div>
+
     <div id="qa-feed">
         <p id="loader" style="text-align:center;margin-top:50px;color:var(--text-light);">Loading...</p>
     </div>
@@ -127,6 +195,7 @@
     <span class="close-modal">&times;</span>
     <h3>Ask Question</h3>
     <form id="ask-form">
+        <!-- No Department Field anymore -->
         <div class="form-group"><label>Category</label>
             <select id="q-cat" required>
                 <option value="General">General</option><option value="Academic">Academic</option>
@@ -153,7 +222,8 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1dWNncWJ5ZWdlcm5keXZpZWZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1NTc1NTksImV4cCI6MjA3NzEzMzU1OX0.fImUoHr86_5MdkDEWu8JXhjSaG2oxbq0IoGhZ6XeH-0';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
-    let currentUser=null, currentQId=null, allQuestions=[], allAnswers=[], currentFilter='all';
+    let currentUser=null, currentQId=null, allQuestions=[], allAnswers=[];
+    let currentFilter = 'all'; // Track active category tab
     let votedItems = JSON.parse(localStorage.getItem('votedItems') || '[]');
 
     async function init() {
@@ -161,11 +231,14 @@
         if (!session) return window.location.href = 'index.html';
         currentUser = session.user;
         document.getElementById('user-pic').src = currentUser.user_metadata.profile_image || `https://placehold.co/40/5E35B1/fff?text=${(currentUser.user_metadata.fullname||'U')[0]}`;
+        
         loadData();
     }
 
     async function loadData() {
         const loader = document.getElementById('loader'); if(loader) loader.style.display = 'block';
+        
+        // Removed department join
         const [qs, ans] = await Promise.all([
             supabase.from('questions').select('*, users(user_name,user_avatar,email)').order('created_at',{ascending:false}),
             supabase.from('answers').select('*, users(user_name,email)').order('likes',{ascending:false})
@@ -173,15 +246,51 @@
         if(qs.data) allQuestions = qs.data;
         if(ans.data) allAnswers = ans.data;
         if(loader) loader.style.display = 'none';
-        renderFeed();
+        applyFilters();
     }
 
-    function renderFeed() {
+    function applyFilters() {
         const feed = document.getElementById('qa-feed'); feed.innerHTML = '';
-        const filtered = currentFilter === 'all' ? allQuestions : allQuestions.filter(q => q.category === currentFilter);
-        if(!filtered.length) { feed.innerHTML = '<p style="text-align:center;opacity:0.7;margin-top:40px;">No questions in this category.</p>'; return; }
+        
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const sort = document.getElementById('sortFilter').value;
+
+        let filtered = allQuestions.filter(q => {
+            const matchSearch = 
+                (q.title.toLowerCase().includes(searchTerm)) || 
+                (q.content.toLowerCase().includes(searchTerm));
+            
+            // Filter by active tab
+            const matchCat = currentFilter === 'all' || (q.category === currentFilter);
+
+            return matchSearch && matchCat;
+        });
+
+        // Sorting
+        filtered.sort((a,b) => {
+            if(sort === 'newest') return new Date(b.created_at) - new Date(a.created_at);
+            if(sort === 'oldest') return new Date(a.created_at) - new Date(b.created_at);
+            if(sort === 'popular') return (b.likes||0) - (a.likes||0);
+        });
+
+        if(!filtered.length) { feed.innerHTML = '<p style="text-align:center;opacity:0.7;margin-top:40px;">No matching questions found.</p>'; return; }
         filtered.forEach(q => feed.appendChild(createCard(q, allAnswers.filter(a => a.q_id === q.q_id))));
     }
+
+    // Listeners for filters
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+    document.getElementById('sortFilter').addEventListener('change', applyFilters);
+
+    // Tab Button Logic
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.onclick = () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.dataset.cat;
+            applyFilters();
+        };
+    });
+
 
     function getUser(obj) {
         let u = obj; if(Array.isArray(u)) u = u[0];
@@ -192,6 +301,7 @@
         const u = getUser(q.users);
         const isOwner = currentUser.id === q.user_id;
         const isVoted = votedItems.includes('q_'+q.q_id);
+        
         const shareText = `❓ *CampusHub Question*\n\n**${q.title}**\n${q.content}`;
 
         const card = document.createElement('div');
@@ -205,8 +315,10 @@
             <div class="q-header">
                 <img src="${u.avatar || `https://placehold.co/45/ccc/fff?text=${u.name[0]}`}" alt="${u.name}">
                 <div class="q-meta">
-                    <div><strong>${u.name}</strong><span class="cat-pill">${q.category||'General'}</span></div>
-                    <span class="q-date">${new Date(q.created_at).toLocaleDateString()}</span>
+                    <div>
+                        <strong>${u.name}</strong>
+                    </div>
+                    <span class="q-date">${new Date(q.created_at).toLocaleDateString()} • <span class="cat-pill" style="margin-left:0; font-size: 0.7rem; background: transparent; padding: 0; color: var(--text-light);">${q.category||'General'}</span></span>
                 </div>
             </div>
             <h3 style="margin-top:0;">${q.title}</h3>
@@ -272,10 +384,6 @@
     }
 
     // Events
-    document.querySelectorAll('.filter-btn').forEach(btn => btn.onclick = () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active'); currentFilter = btn.dataset.cat; renderFeed();
-    });
     const askM = document.getElementById('ask-modal'), ansM = document.getElementById('ans-modal');
     window.openAns = (id) => { currentQId=id; ansM.classList.add('active'); }
     document.getElementById('ask-btn').onclick = () => askM.classList.add('active');
@@ -286,7 +394,14 @@
     document.getElementById('ask-form').onsubmit = async (e) => {
         e.preventDefault();
         const btn=document.getElementById('post-q-btn'); btn.disabled=true; btn.textContent='Posting...';
-        await supabase.from('questions').insert({ user_id: currentUser.id, category: document.getElementById('q-cat').value, title: document.getElementById('q-title').value, content: document.getElementById('q-details').value });
+        
+        // No Dept Id
+        await supabase.from('questions').insert({ 
+            user_id: currentUser.id, 
+            category: document.getElementById('q-cat').value, 
+            title: document.getElementById('q-title').value, 
+            content: document.getElementById('q-details').value 
+        });
         askM.classList.remove('active'); e.target.reset(); loadData(); btn.disabled=false; btn.textContent='Post Question';
     };
     document.getElementById('ans-form').onsubmit = async (e) => {
