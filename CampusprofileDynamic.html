@@ -14,10 +14,12 @@
   --primary: #5E35B1; --primary-grad: linear-gradient(135deg, #7E57C2, #5E35B1);
   --bg1: #f3e9fb; --bg2: #ede7f6; --card: #ffffff;
   --text: #333; --text-light: #555; --border: #e0e0e0;
+  --chip-bg: #ede7f6; --chip-text: #5E35B1;
 }
 body.dark {
   --bg1: #1b132d; --bg2: #2a1f47; --card: #2a1f47;
   --text: #f3e9fb; --text-light: #d1c4e9; --border: #4a3a6b;
+  --chip-bg: #3b2d5f; --chip-text: #b39ddb;
 }
 body {
   font-family: 'Poppins', sans-serif; background: linear-gradient(120deg, var(--bg1), var(--bg2));
@@ -31,18 +33,14 @@ header{height:70px;background:var(--primary-grad);color:#fff;display:flex;justif
 .nav-link{text-decoration:none;color:#fff;opacity:0.9;padding:10px;transition:0.3s;}
 .nav-link:hover,.nav-link.active{opacity:1;border-bottom:3px solid #fff;}
 .nav-user{display:flex;align-items:center;gap:15px;}
-.user-pic{width:40px;height:40px;border-radius:50%;border:2px solid rgba(255,255,255,0.8);cursor:pointer;object-fit:cover;}
 #themeToggle,#logout-btn{background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;transition:0.3s;}
 #themeToggle:hover{transform:rotate(20deg);}
 
 /* PROFILE MAIN */
-main { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+main { max-width: 800px; margin: 40px auto; padding: 0 20px; padding-bottom: 60px; }
 
 /* PROFILE BANNER & HEADER */
-.profile-header {
-    position: relative;
-    margin-bottom: 60px;
-}
+.profile-header { position: relative; margin-bottom: 60px; }
 .banner {
     height: 160px;
     background: var(--primary-grad);
@@ -50,129 +48,87 @@ main { max-width: 800px; margin: 40px auto; padding: 0 20px; }
     box-shadow: 0 10px 30px rgba(94, 53, 177, 0.3);
 }
 .profile-pic-wrapper {
-    position: absolute;
-    bottom: -50px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 140px;
-    height: 140px;
+    position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%);
+    width: 140px; height: 140px;
 }
 .profile-pic {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    border: 5px solid var(--card);
-    object-fit: cover;
-    background: var(--card);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    transition: 0.3s;
+    width: 100%; height: 100%; border-radius: 50%; border: 5px solid var(--card);
+    object-fit: cover; background: var(--card);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2); transition: 0.3s;
 }
 .pic-edit-overlay {
-    position: absolute;
-    inset: 5px; /* matches border */
-    background: rgba(0,0,0,0.5);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 1.5rem;
-    opacity: 0;
-    transition: 0.3s;
-    cursor: pointer;
+    position: absolute; inset: 5px; background: rgba(0,0,0,0.5); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; color: #fff;
+    font-size: 1.5rem; opacity: 0; transition: 0.3s; cursor: pointer;
 }
 .profile-pic-wrapper:hover .pic-edit-overlay { opacity: 1; }
 
 /* FORM CARD */
 .card {
-    background: var(--card);
-    border-radius: 20px;
-    padding: 40px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-    border: 1px solid var(--border);
+    background: var(--card); border-radius: 20px; padding: 40px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08); border: 1px solid var(--border);
     animation: slideUp 0.5s ease;
 }
 @keyframes slideUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
 
-h2 { color: var(--primary); text-align: center; margin-bottom: 30px; }
+h2 { color: var(--primary); text-align: center; margin-bottom: 10px; }
+h3.section-title { font-size: 1.1rem; color: var(--text); margin: 25px 0 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
 body.dark h2 { color: #9FA8DA; }
 
-.form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
 
-.form-group { margin-bottom: 20px; position: relative; }
+.form-group { margin-bottom: 15px; position: relative; }
 .form-group.full-width { grid-column: 1 / -1; }
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: var(--text);
-    font-size: 0.9rem;
-}
+label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text); font-size: 0.9rem; }
+
+/* INPUTS */
 .input-wrapper { position: relative; }
 .input-wrapper i {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--primary);
-    opacity: 0.7;
+    position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+    color: var(--primary); opacity: 0.7; pointer-events: none;
 }
 input, select, textarea {
-    width: 100%;
-    padding: 14px 14px 14px 45px; /* space for icon */
-    border-radius: 12px;
-    border: 2px solid var(--border);
-    background: var(--bg1);
-    color: var(--text);
-    font-family: inherit;
-    font-size: 1rem;
-    transition: 0.3s;
-    box-sizing: border-box;
+    width: 100%; padding: 14px 14px 14px 45px; border-radius: 12px;
+    border: 2px solid var(--border); background: var(--bg1); color: var(--text);
+    font-family: inherit; font-size: 1rem; transition: 0.3s; box-sizing: border-box;
 }
 textarea { padding: 14px; min-height: 100px; resize: vertical; }
 input:focus, select:focus, textarea:focus {
-    border-color: var(--primary);
-    background: var(--card);
-    outline: none;
+    border-color: var(--primary); background: var(--card); outline: none;
     box-shadow: 0 0 0 4px rgba(94, 53, 177, 0.1);
 }
 input:disabled { opacity: 0.7; cursor: not-allowed; }
 
+/* INTERESTS CHIPS */
+.chip-container { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+.chip-checkbox { display: none; }
+.chip-label {
+    padding: 8px 18px; background: var(--bg1); border: 2px solid var(--border);
+    border-radius: 50px; font-size: 0.9rem; font-weight: 500; color: var(--text-light);
+    cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px;
+}
+.chip-label:hover { border-color: var(--primary); color: var(--primary); }
+.chip-checkbox:checked + .chip-label {
+    background: var(--primary); border-color: var(--primary); color: #fff;
+    box-shadow: 0 4px 10px rgba(94, 53, 177, 0.3);
+}
+
+/* BUTTONS */
 .save-btn {
-    width: 100%;
-    padding: 15px;
-    background: var(--primary-grad);
-    color: #fff;
-    border: none;
-    border-radius: 50px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: 0.3s;
-    box-shadow: 0 8px 20px rgba(94, 53, 177, 0.3);
-    display: flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%; padding: 15px; background: var(--primary-grad); color: #fff;
+    border: none; border-radius: 50px; font-size: 1.1rem; font-weight: 700;
+    cursor: pointer; transition: 0.3s; box-shadow: 0 8px 20px rgba(94, 53, 177, 0.3);
+    display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px;
 }
 .save-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(94, 53, 177, 0.4); }
 .save-btn:disabled { opacity: 0.7; cursor: wait; }
 
+/* TOAST */
 #toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: var(--text);
-    color: var(--card);
-    padding: 12px 25px;
-    border-radius: 50px;
-    font-weight: 600;
-    opacity: 0;
-    transition: 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    z-index: 1000;
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--text); color: var(--card); padding: 12px 25px; border-radius: 50px;
+    font-weight: 600; opacity: 0; transition: 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); z-index: 1000;
 }
 #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 #toast.success { background: #4CAF50; color: #fff; }
@@ -213,6 +169,8 @@ input:disabled { opacity: 0.7; cursor: not-allowed; }
     <section class="card">
         <h2>Edit Profile</h2>
         <form id="profile-form">
+            
+            <!-- Basic Details -->
             <div class="form-grid">
                 <div class="form-group">
                     <label>Full Name</label>
@@ -255,9 +213,73 @@ input:disabled { opacity: 0.7; cursor: not-allowed; }
                         </select>
                     </div>
                 </div>
-                <div class="form-group full-width">
-                    <label>About Me (Bio)</label>
-                    <textarea id="bio" placeholder="Tell us a little about yourself..."></textarea>
+            </div>
+
+            <!-- About Me -->
+            <div class="form-group full-width">
+                <label>About Me (Bio)</label>
+                <textarea id="bio" placeholder="Tell us a little about yourself..."></textarea>
+            </div>
+
+            <!-- Interests Section -->
+            <h3 class="section-title">Interests & Skills</h3>
+            <div class="form-group full-width">
+                <label>Select your interests</label>
+                <div class="chip-container">
+                    <input type="checkbox" id="chk-coding" class="chip-checkbox" value="Coding">
+                    <label for="chk-coding" class="chip-label">💻 Coding</label>
+
+                    <input type="checkbox" id="chk-design" class="chip-checkbox" value="Design">
+                    <label for="chk-design" class="chip-label">🎨 Design</label>
+
+                    <input type="checkbox" id="chk-sports" class="chip-checkbox" value="Sports">
+                    <label for="chk-sports" class="chip-label">⚽ Sports</label>
+
+                    <input type="checkbox" id="chk-music" class="chip-checkbox" value="Music">
+                    <label for="chk-music" class="chip-label">🎵 Music</label>
+
+                    <input type="checkbox" id="chk-gaming" class="chip-checkbox" value="Gaming">
+                    <label for="chk-gaming" class="chip-label">🎮 Gaming</label>
+
+                    <input type="checkbox" id="chk-photo" class="chip-checkbox" value="Photography">
+                    <label for="chk-photo" class="chip-label">📷 Photography</label>
+                </div>
+                <div class="input-wrapper" style="margin-top: 10px;">
+                    <i class="fas fa-plus"></i>
+                    <input type="text" id="other-interests" placeholder="Other interests (comma separated, e.g. Chess, Debate)">
+                </div>
+            </div>
+
+            <!-- Social Links Section -->
+            <h3 class="section-title">Social Links</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>LinkedIn</label>
+                    <div class="input-wrapper">
+                        <i class="fa-brands fa-linkedin"></i>
+                        <input type="url" id="social-linkedin" placeholder="https://linkedin.com/in/...">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>GitHub</label>
+                    <div class="input-wrapper">
+                        <i class="fa-brands fa-github"></i>
+                        <input type="url" id="social-github" placeholder="https://github.com/...">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Instagram</label>
+                    <div class="input-wrapper">
+                        <i class="fa-brands fa-instagram"></i>
+                        <input type="url" id="social-instagram" placeholder="https://instagram.com/...">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Portfolio / Website</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-globe"></i>
+                        <input type="url" id="social-website" placeholder="https://yourportfolio.com">
+                    </div>
                 </div>
             </div>
 
@@ -292,14 +314,47 @@ input:disabled { opacity: 0.7; cursor: not-allowed; }
         document.getElementById('dept').value = meta.dept || '';
         document.getElementById('year').value = meta.year || '';
         
-        // FIX: Correctly load the profile picture or a fallback with initials
+        // Profile Pic Logic
         const initial = (meta.fullname || currentUser.email || 'U')[0].toUpperCase();
         const avatarUrl = meta.profile_image || `https://placehold.co/150/5E35B1/fff?text=${initial}`;
         document.getElementById('profile-preview').src = avatarUrl;
 
-        // Load Bio from Database (if user_profiles table exists)
-        const { data } = await supabase.from('user_profiles').select('bio').eq('user_id', currentUser.id).single();
-        if (data && data.bio) document.getElementById('bio').value = data.bio;
+        // Load Bio, Interests & Socials from Database
+        // Assumption: 'user_profiles' table has columns: bio (text), interests (jsonb/array), socials (jsonb)
+        const { data } = await supabase.from('user_profiles').select('*').eq('user_id', currentUser.id).single();
+        
+        if (data) {
+            // Bio
+            if (data.bio) document.getElementById('bio').value = data.bio;
+
+            // Interests Logic
+            if (data.interests) {
+                // If stored as array ["Coding", "Music"]
+                const savedInterests = Array.isArray(data.interests) ? data.interests : JSON.parse(data.interests || '[]');
+                
+                // Check chips
+                document.querySelectorAll('.chip-checkbox').forEach(chk => {
+                    if (savedInterests.includes(chk.value)) {
+                        chk.checked = true;
+                    }
+                });
+
+                // Add non-chip interests to text box
+                const standardValues = Array.from(document.querySelectorAll('.chip-checkbox')).map(c => c.value);
+                const otherValues = savedInterests.filter(i => !standardValues.includes(i));
+                document.getElementById('other-interests').value = otherValues.join(', ');
+            }
+
+            // Socials Logic
+            if (data.socials) {
+                // If stored as JSON { "linkedin": "...", "github": "..." }
+                const s = typeof data.socials === 'object' ? data.socials : JSON.parse(data.socials);
+                document.getElementById('social-linkedin').value = s.linkedin || '';
+                document.getElementById('social-github').value = s.github || '';
+                document.getElementById('social-instagram').value = s.instagram || '';
+                document.getElementById('social-website').value = s.website || '';
+            }
+        }
     }
 
     // === 2. INSTANT IMAGE PREVIEW ===
@@ -329,7 +384,7 @@ input:disabled { opacity: 0.7; cursor: not-allowed; }
                 avatarUrl = publicUrl;
             }
 
-            // 3b. Update Auth Metadata
+            // 3b. Update Auth Metadata (Core Info)
             const { error: authErr } = await supabase.auth.updateUser({
                 data: {
                     fullname: document.getElementById('fullname').value,
@@ -340,10 +395,27 @@ input:disabled { opacity: 0.7; cursor: not-allowed; }
             });
             if (authErr) throw authErr;
 
-            // 3c. Update Bio in DB (Upsert handles insert or update)
+            // 3c. Gather Complex Data (Interests & Socials)
+            
+            // Gather Interests
+            const selectedChips = Array.from(document.querySelectorAll('.chip-checkbox:checked')).map(c => c.value);
+            const otherText = document.getElementById('other-interests').value.split(',').map(s => s.trim()).filter(s => s);
+            const finalInterests = [...new Set([...selectedChips, ...otherText])]; // Remove duplicates
+
+            // Gather Socials
+            const socialData = {
+                linkedin: document.getElementById('social-linkedin').value,
+                github: document.getElementById('social-github').value,
+                instagram: document.getElementById('social-instagram').value,
+                website: document.getElementById('social-website').value
+            };
+
+            // 3d. Update DB
             await supabase.from('user_profiles').upsert({
                 user_id: currentUser.id,
-                bio: document.getElementById('bio').value
+                bio: document.getElementById('bio').value,
+                interests: finalInterests,  // Stored as Array (Postgres) or JSON
+                socials: socialData         // Stored as JSON
             });
 
             showToast('✅ Profile updated successfully!', 'success');
